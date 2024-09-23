@@ -5,28 +5,28 @@ import { DataTypes, QueryInterface } from 'sequelize';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
-        await queryInterface.createTable('Logs', {
+        await queryInterface.createTable('User_Roles', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            level: {
-                type: Sequelize.STRING,
+            userId: {
+                type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'users',
+                    key: 'id',
+                },
             },
-            message: {
-                type: Sequelize.STRING,
+            roleId: {
+                type: Sequelize.INTEGER,
                 allowNull: false,
-            },
-            meta: {
-                type: Sequelize.TEXT,
-                allowNull: true,
-            },
-            timestamp: {
-                type: Sequelize.DATE,
-                allowNull: false,
+                references: {
+                    model: 'roles',
+                    key: 'id',
+                },
             },
             createdAt: {
                 allowNull: false,
@@ -39,6 +39,7 @@ module.exports = {
         });
     },
     async down(queryInterface: QueryInterface) {
-        await queryInterface.dropTable('Logs');
+        await queryInterface.dropTable('User_Roles');
     },
 };
+

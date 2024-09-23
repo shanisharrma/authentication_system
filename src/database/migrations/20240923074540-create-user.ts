@@ -5,27 +5,35 @@ import { DataTypes, QueryInterface } from 'sequelize';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
-        await queryInterface.createTable('Logs', {
+        await queryInterface.createTable('Users', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            level: {
+            name: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            message: {
+            email: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            meta: {
-                type: Sequelize.TEXT,
-                allowNull: true,
+            password: {
+                type: Sequelize.STRING,
+                allowNull: false,
             },
-            timestamp: {
+            timezone: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            lastLoginAt: {
                 type: Sequelize.DATE,
+                defaultValue: null,
+            },
+            consent: {
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
             },
             createdAt: {
@@ -39,6 +47,7 @@ module.exports = {
         });
     },
     async down(queryInterface: QueryInterface) {
-        await queryInterface.dropTable('Logs');
+        await queryInterface.dropTable('Users');
     },
 };
+

@@ -5,27 +5,31 @@ import { DataTypes, QueryInterface } from 'sequelize';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
-        await queryInterface.createTable('Logs', {
+        await queryInterface.createTable('Phone_Numbers', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            level: {
+            userId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'users',
+                    key: 'id',
+                },
+            },
+            isoCode: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            message: {
+            countryCode: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            meta: {
-                type: Sequelize.TEXT,
-                allowNull: true,
-            },
-            timestamp: {
-                type: Sequelize.DATE,
+            internationalNumber: {
+                type: Sequelize.STRING,
                 allowNull: false,
             },
             createdAt: {
@@ -39,6 +43,7 @@ module.exports = {
         });
     },
     async down(queryInterface: QueryInterface) {
-        await queryInterface.dropTable('Logs');
+        await queryInterface.dropTable('Phone_Numbers');
     },
 };
+

@@ -19,4 +19,7 @@ export default {
     RATE_LIMIT_MAX: process.env.RATE_LIMIT_MAX, // Max requests in a time window.
     RATE_LIMIT_WINDOW: process.env.RATE_LIMIT_WINDOW, // Duration for points validity.
     RATE_LIMIT_BLOCK_WINDOW: process.env.RATE_LIMIT_BLOCK_WINDOW, // Block duration after limit exceeded.
+
+    // Password Hash
+    SALT_ROUNDS: process.env.SALT_ROUNDS,
 };
