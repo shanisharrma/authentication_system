@@ -1,0 +1,64 @@
+{
+    "name": "authentication-system",
+    "version": "1.0.0",
+    "main": "dist/server.js",
+    "scripts": {
+        "dist": "npx tsc",
+        "dev": "cross-env NODE_ENV=development nodemon --legacy-watch src/server.ts",
+        "start": "cross-env NODE_ENV=production node dist/server.js",
+        "lint": "eslint .",
+        "db:migrate:dev": "cross-env NODE_ENV=development sequelize db:migrate",
+        "db:migrate:prod": "cross-env NODE_ENV=production sequelize db:migrate",
+        "lint:fix": "eslint . --fix",
+        "format:check": "prettier . --check",
+        "format:fix": "prettier . --fix",
+        "prepare": "husky"
+    },
+    "keywords": [],
+    "author": "Shani Sharma",
+    "license": "ISC",
+    "lint-staged": {
+        "*.ts": [
+            "npm run lint:fix",
+            "npm run format:fix"
+        ]
+    },
+    "description": "",
+    "devDependencies": {
+        "@commitlint/cli": "^19.5.0",
+        "@commitlint/config-conventional": "^19.5.0",
+        "@eslint/js": "^9.10.0",
+        "@types/cors": "^2.8.17",
+        "@types/eslint__js": "^8.42.3",
+        "@types/express": "^4.17.21",
+        "@types/http-status-codes": "^1.2.0",
+        "@types/node": "^22.5.5",
+        "@types/sequelize": "^4.28.20",
+        "@types/source-map-support": "^0.5.10",
+        "eslint": "^9.10.0",
+        "eslint-config-prettier": "^9.1.0",
+        "husky": "^9.1.6",
+        "lint-staged": "^15.2.10",
+        "nodemon": "^3.1.6",
+        "prettier": "3.3.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.2",
+        "typescript-eslint": "^8.6.0"
+    },
+    "dependencies": {
+        "colorette": "^2.0.20",
+        "cors": "^2.8.5",
+        "cross-env": "^7.0.3",
+        "dotenv-flow": "^4.1.0",
+        "express": "^4.21.0",
+        "helmet": "^7.1.0",
+        "http-status-codes": "^2.3.0",
+        "joi": "^17.13.3",
+        "mysql2": "^3.11.3",
+        "rate-limiter-flexible": "^5.0.3",
+        "sequelize": "^6.37.3",
+        "sequelize-cli": "^6.6.2",
+        "source-map-support": "^0.5.21",
+        "winston": "^3.14.2"
+    }
+}
