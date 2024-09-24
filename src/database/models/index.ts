@@ -1,3 +1,4 @@
+import Account_Confirmation from './account_confirmation';
 import Phone_Number from './phone_number';
 import Role from './role';
 import User from './user';
@@ -29,4 +30,15 @@ Phone_Number.belongsTo(User, {
     as: 'phoneNumber',
 });
 
-export { Role, User, Phone_Number };
+// One-to-One Associations between User and Account Confirmation
+User.hasOne(Account_Confirmation, {
+    foreignKey: 'userId',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+Account_Confirmation.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'accountConfirmation',
+});
+
+export { Role, User, Phone_Number, Account_Confirmation };

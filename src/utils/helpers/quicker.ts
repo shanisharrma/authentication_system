@@ -3,6 +3,8 @@ import { ServerConfig } from '../../config';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { getTimezonesForCountry } from 'countries-and-timezones';
 import bcrypt from 'bcrypt';
+import { v4 as uuid } from 'uuid';
+import { randomInt } from 'crypto';
 
 export class Quicker {
     public static getSystemHealth() {
@@ -48,5 +50,16 @@ export class Quicker {
 
     public static async hashPassword(password: string) {
         return await bcrypt.hash(password, Number(ServerConfig.SALT_ROUNDS));
+    }
+
+    public static generateRandomId() {
+        return uuid();
+    }
+
+    public static generateOtp(length: number) {
+        const min = Math.pow(10, length - 1);
+        const max = Math.pow(10, 6) - 1;
+
+        return randomInt(min, max).toString();
     }
 }

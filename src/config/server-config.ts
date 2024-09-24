@@ -15,6 +15,12 @@ export default {
     DB_NAME: process.env.DB_NAME, // Database name.
     DB_HOST: process.env.DB_HOST, // Database host.
 
+    // Frontend Configuration
+    FRONTEND_URL: process.env.FRONTEND_URL,
+
+    // Email Service
+    EMAIL_SERVICE_API_KEY: process.env.EMAIL_SERVICE_API_KEY,
+
     // Rate Limiting Configuration
     RATE_LIMIT_MAX: process.env.RATE_LIMIT_MAX, // Max requests in a time window.
     RATE_LIMIT_WINDOW: process.env.RATE_LIMIT_WINDOW, // Duration for points validity.

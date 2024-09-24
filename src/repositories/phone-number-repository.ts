@@ -1,4 +1,4 @@
-import { Phone_Number } from '../database/models';
+import { Phone_Number } from '../database';
 import CrudRepository from './crud-repository';
 
 class PhoneNumberRepository extends CrudRepository<Phone_Number> {
