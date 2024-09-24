@@ -1,5 +1,6 @@
 import Account_Confirmation from './account_confirmation';
 import Phone_Number from './phone_number';
+import Refresh_Token from './refresh_token';
 import Role from './role';
 import User from './user';
 
@@ -43,4 +44,16 @@ Account_Confirmation.belongsTo(User, {
     as: 'user',
 });
 
-export { Role, User, Phone_Number, Account_Confirmation };
+// One-to-Many Association between User and Refresh Token
+User.hasMany(Refresh_Token, {
+    foreignKey: 'userId',
+    as: 'refreshTokens',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+Refresh_Token.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+});
+
+export { Role, User, Phone_Number, Account_Confirmation, Refresh_Token };

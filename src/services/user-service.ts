@@ -1,6 +1,6 @@
 import AppError from '../utils/errors/app-error';
 import { EApplicationEvents, EUserRole } from '../utils/constants/Enums';
-import { IRegisterRequestBody, IUserAttributes } from '../types';
+import { ILoginRequestBody, IRefreshTokenAttributes, IRegisterRequestBody, IUserAttributes } from '../types';
 import { Quicker } from '../utils/helpers';
 import { ResponseMessage } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
@@ -12,6 +12,7 @@ import MailService from './mail-service';
 import { Logger } from '../utils/commons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import RefreshTokenService from './refresh-token-service';
 
 dayjs.extend(utc);
 
@@ -21,6 +22,7 @@ class UserService {
     private phoneNumberService: PhoneNumberService;
     private accountConfirmationService: AccountConfirmationService;
     private mailService: MailService;
+    private refreshTokenService: RefreshTokenService;
 
     constructor() {
         this.userRepository = new UserRepository();
@@ -28,6 +30,7 @@ class UserService {
         this.phoneNumberService = new PhoneNumberService();
         this.accountConfirmationService = new AccountConfirmationService();
         this.mailService = new MailService();
+        this.refreshTokenService = new RefreshTokenService();
     }
 
     public async register(data: IRegisterRequestBody) {
@@ -109,10 +112,9 @@ class UserService {
 
             return userDetails;
         } catch (error) {
-            if (error instanceof AppError) {
-                throw new AppError(error.message, error.statusCode, error.stack);
-            }
-            throw error;
+            if (error instanceof AppError) throw error;
+
+            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -145,10 +147,61 @@ class UserService {
 
             return accountConfirmed;
         } catch (error) {
-            if (error instanceof AppError) {
-                throw new AppError(error.message, error.statusCode, error.stack);
+            if (error instanceof AppError) throw error;
+
+            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async login(data: ILoginRequestBody) {
+        try {
+            // * Destructuring the req body
+            const { email, password } = data;
+
+            // * Find user
+            const user = await this.userRepository.findOneByEmailWithPassword(email);
+            if (!user) {
+                throw new AppError(ResponseMessage.INCORRECT_EMAIL_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
             }
-            throw error;
+
+            // * Validate password
+            const isPasswordMatched = await Quicker.comparePassword(password, user.password);
+            if (!isPasswordMatched) {
+                throw new AppError(ResponseMessage.INCORRECT_EMAIL_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
+            }
+
+            // * access token and refresh token
+            const accessToken = Quicker.generateToken(
+                { userId: user.id },
+                ServerConfig.ACCESS_TOKEN.SECRET as string,
+                ServerConfig.ACCESS_TOKEN.EXPIRY,
+            );
+
+            const refreshToken = Quicker.generateToken(
+                { userId: user.id },
+                ServerConfig.REFRESH_TOKEN.SECRET as string,
+                ServerConfig.REFRESH_TOKEN.EXPIRY,
+            );
+
+            // * Last Login Information
+            const lastLoginAt = dayjs().utc().toDate();
+            await this.userRepository.update(user.id, { lastLoginAt });
+
+            // * Refresh Token store
+            const refreshTokenPayload: IRefreshTokenAttributes = {
+                token: refreshToken,
+                userId: user.id,
+                expiresAt: new Date(Date.now() + ServerConfig.REFRESH_TOKEN.EXPIRY),
+                revoked: false,
+            };
+
+            await this.refreshTokenService.createRefreshToken(refreshTokenPayload);
+
+            return { accessToken, refreshToken };
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

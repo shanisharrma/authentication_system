@@ -58,10 +58,26 @@ export interface IAccountConfirmationAttributes {
     user?: IUserAttributes;
 }
 
+export interface IRefreshTokenAttributes {
+    id?: number;
+    userId: number;
+    token: string;
+    expiresAt: Date;
+    revoked?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
+}
+
 export interface IRegisterRequestBody {
     name: string;
     email: string;
     password: string;
     phoneNumber: string;
     consent: boolean;
+}
+
+export interface ILoginRequestBody {
+    email: string;
+    password: string;
 }

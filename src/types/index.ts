@@ -6,7 +6,8 @@ import {
     IRoleAttributes,
     IPhoneNumberAttributes,
     IAccountConfirmationAttributes,
-    IUserDetails,
+    ILoginRequestBody,
+    IRefreshTokenAttributes,
 } from './user-types';
 
 export {
@@ -19,5 +20,6 @@ export {
     IRoleAttributes,
     IPhoneNumberAttributes,
     IAccountConfirmationAttributes,
-    IUserDetails,
+    ILoginRequestBody,
+    IRefreshTokenAttributes,
 };

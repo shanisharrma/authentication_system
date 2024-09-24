@@ -1,3 +1,3 @@
-import { registerSchema } from './auth-schema';
+import { registerSchema, loginSchema } from './auth-schema';
 
-export { registerSchema };
+export { registerSchema, loginSchema };

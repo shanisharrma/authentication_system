@@ -5,6 +5,7 @@ import { getTimezonesForCountry } from 'countries-and-timezones';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { randomInt } from 'crypto';
+import jwt from 'jsonwebtoken';
 
 export class Quicker {
     public static getSystemHealth() {
@@ -49,7 +50,11 @@ export class Quicker {
     }
 
     public static async hashPassword(password: string) {
-        return await bcrypt.hash(password, Number(ServerConfig.SALT_ROUNDS));
+        return await bcrypt.hash(password, ServerConfig.SALT_ROUNDS);
+    }
+
+    public static async comparePassword(attemptedPassword: string, hashedPassword: string) {
+        return await bcrypt.compare(attemptedPassword, hashedPassword);
     }
 
     public static generateRandomId() {
@@ -61,5 +66,11 @@ export class Quicker {
         const max = Math.pow(10, 6) - 1;
 
         return randomInt(min, max).toString();
+    }
+
+    public static generateToken(payload: object, secret: string, expiry: number) {
+        return jwt.sign(payload, secret, {
+            expiresIn: expiry,
+        });
     }
 }

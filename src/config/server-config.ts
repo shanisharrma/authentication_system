@@ -22,10 +22,22 @@ export default {
     EMAIL_SERVICE_API_KEY: process.env.EMAIL_SERVICE_API_KEY,
 
     // Rate Limiting Configuration
-    RATE_LIMIT_MAX: process.env.RATE_LIMIT_MAX, // Max requests in a time window.
-    RATE_LIMIT_WINDOW: process.env.RATE_LIMIT_WINDOW, // Duration for points validity.
-    RATE_LIMIT_BLOCK_WINDOW: process.env.RATE_LIMIT_BLOCK_WINDOW, // Block duration after limit exceeded.
+    RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX), // Max requests in a time window.
+    RATE_LIMIT_WINDOW: Number(process.env.RATE_LIMIT_WINDOW), // Duration for points validity.
+    RATE_LIMIT_BLOCK_WINDOW: Number(process.env.RATE_LIMIT_BLOCK_WINDOW), // Block duration after limit exceeded.
 
     // Password Hash
-    SALT_ROUNDS: process.env.SALT_ROUNDS,
+    SALT_ROUNDS: Number(process.env.SALT_ROUNDS),
+
+    // Access Token
+    ACCESS_TOKEN: {
+        SECRET: process.env.ACCESS_TOKEN_SECRET,
+        EXPIRY: 3600,
+    },
+
+    // Refresh Token
+    REFRESH_TOKEN: {
+        SECRET: process.env.REFRESH_TOKEN_SECRET,
+        EXPIRY: 3600 * 24 * 30,
+    },
 };
