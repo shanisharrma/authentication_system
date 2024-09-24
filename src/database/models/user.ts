@@ -4,19 +4,7 @@ import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, Da
 import connection from '../sequelize';
 import Role from './role';
 import { Quicker } from '../../utils/helpers';
-
-interface IUserAttributes {
-    id?: number;
-    name: string;
-    email: string;
-    password: string;
-    timezone: string;
-    lastLoginAt?: Date | null;
-    consent: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-}
+import { IUserAttributes } from '../../types';
 
 class User extends Model<IUserAttributes> implements IUserAttributes {
     public id!: number;
@@ -83,6 +71,18 @@ User.init(
     {
         sequelize: connection,
         modelName: 'User',
+        defaultScope: {
+            attributes: {
+                exclude: ['password'],
+            },
+        },
+        scopes: {
+            withPassword: {
+                attributes: {
+                    exclude: [''],
+                },
+            },
+        },
     },
 );
 

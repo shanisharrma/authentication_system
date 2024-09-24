@@ -2,18 +2,7 @@
 
 import { DataTypes, Model } from 'sequelize';
 import connection from '../sequelize';
-
-interface IAccountConfirmationAttributes {
-    id?: number;
-    userId: number;
-    status: boolean;
-    token: string;
-    code: string;
-    timestamp?: Date;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-}
+import { IAccountConfirmationAttributes } from '../../types';
 
 class Account_Confirmation extends Model<IAccountConfirmationAttributes> implements IAccountConfirmationAttributes {
     public id!: number;

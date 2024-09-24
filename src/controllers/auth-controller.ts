@@ -19,7 +19,7 @@ export class AuthController {
 
             const response = await AuthController.userService.register(body);
 
-            HttpResponse(req, res, StatusCodes.CREATED, ResponseMessage.SUCCESS, response);
+            HttpResponse(req, res, StatusCodes.CREATED, ResponseMessage.SUCCESS, { user: response.user.id });
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }

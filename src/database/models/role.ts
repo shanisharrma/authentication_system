@@ -3,17 +3,9 @@
 import { DataTypes, Model } from 'sequelize';
 import connection from '../sequelize';
 import { EUserRole } from '../../utils/constants/Enums';
+import { IRoleAttributes } from '../../types';
 
 const { ADMIN, MODERATOR, USER } = EUserRole;
-
-interface IRoleAttributes {
-    id?: number;
-    role: string;
-    description?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-}
 
 class Role extends Model<IRoleAttributes> implements IRoleAttributes {
     public id!: number;

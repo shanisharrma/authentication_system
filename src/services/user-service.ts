@@ -1,7 +1,6 @@
 import AppError from '../utils/errors/app-error';
-import { User } from '../database';
 import { EApplicationEvents, EUserRole } from '../utils/constants/Enums';
-import { IRegisterRequestBody } from '../types/user-types';
+import { IRegisterRequestBody, IUserDetails } from '../types/user-types';
 import { Quicker } from '../utils/helpers';
 import { ResponseMessage } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
@@ -53,7 +52,7 @@ class UserService {
             }
 
             // * Creating User
-            const user = await User.create({
+            const user = await this.userRepository.create({
                 name: name,
                 email: email,
                 password: password,
@@ -96,7 +95,14 @@ class UserService {
                 Logger.error(EApplicationEvents.EMAIL_SERVICE, { meta: error });
             });
 
-            return { user, role, newPhoneNumber, accountConfirmation };
+            const userDetails: IUserDetails = {
+                user,
+                role,
+                phoneNumber: newPhoneNumber,
+                accountConfirmation,
+            };
+
+            return userDetails;
         } catch (error) {
             if (error instanceof AppError) {
                 throw new AppError(error.message, error.statusCode, error.stack);

@@ -2,17 +2,7 @@
 
 import { DataTypes, Model } from 'sequelize';
 import connection from '../sequelize';
-
-interface IPhoneNumberAttributes {
-    id?: number;
-    userId: number;
-    isoCode: string;
-    countryCode: string;
-    internationalNumber: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-}
+import { IPhoneNumberAttributes } from '../../types';
 
 class Phone_Number extends Model<IPhoneNumberAttributes> implements IPhoneNumberAttributes {
     public id!: number;

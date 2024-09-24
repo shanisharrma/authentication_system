@@ -1,17 +1,7 @@
 'use strict';
 import { DataTypes, Model } from 'sequelize';
 import connection from '../sequelize';
-
-interface ILogAttributes {
-    id?: number;
-    level: string;
-    message: string;
-    meta?: string;
-    timestamp: Date;
-    createdAt?: Date;
-    deletedAt?: Date;
-    updatedAt?: Date;
-}
+import { ILogAttributes } from '../../types';
 
 class Log extends Model<ILogAttributes> implements ILogAttributes {
     public id!: number;
@@ -64,4 +54,3 @@ Log.init(
 );
 
 export default Log;
-

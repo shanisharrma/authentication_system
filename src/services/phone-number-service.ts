@@ -1,5 +1,5 @@
 import PhoneNumberRepository from '../repositories/phone-number-repository';
-import { IPhoneNumber } from '../types/user-types';
+import { IPhoneNumberAttributes } from '../types';
 
 class PhoneNumberService {
     private phoneNumberRepository: PhoneNumberRepository;
@@ -8,7 +8,7 @@ class PhoneNumberService {
         this.phoneNumberRepository = new PhoneNumberRepository();
     }
 
-    public async createNumber(data: IPhoneNumber) {
+    public async createNumber(data: IPhoneNumberAttributes) {
         const { countryCode, internationalNumber, isoCode, userId } = data;
 
         const phoneNumber = await this.phoneNumberRepository.create({ countryCode, internationalNumber, isoCode, userId });

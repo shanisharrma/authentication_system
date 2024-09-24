@@ -22,6 +22,7 @@ Role.belongsToMany(User, {
 // One-to-One Associations between User and Phone Number
 User.hasOne(Phone_Number, {
     foreignKey: 'userId',
+    as: 'phoneNumber',
     onDelete: 'CASCADE', // Cascade deletes
     onUpdate: 'CASCADE', // Cascade updates
 });
@@ -33,6 +34,7 @@ Phone_Number.belongsTo(User, {
 // One-to-One Associations between User and Account Confirmation
 User.hasOne(Account_Confirmation, {
     foreignKey: 'userId',
+    as: 'accountConfirmation',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
 });

@@ -25,3 +25,14 @@ export type THttpError = {
     data: unknown; // Optional data related to the error.
     trace?: object | null; // Optional stack trace or error details for debugging.
 };
+
+export interface ILogAttributes {
+    id?: number;
+    level: string;
+    message: string;
+    meta?: string;
+    timestamp: Date;
+    createdAt?: Date;
+    deletedAt?: Date;
+    updatedAt?: Date;
+}

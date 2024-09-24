@@ -2,15 +2,7 @@
 
 import { DataTypes, Model } from 'sequelize';
 import connection from '../sequelize';
-
-interface IUserRoleAttributes {
-    id?: number;
-    userId: number;
-    roleId: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-}
+import { IUserRoleAttributes } from '../../types';
 
 class User_Role extends Model<IUserRoleAttributes> implements IUserRoleAttributes {
     public id!: number;
