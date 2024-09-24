@@ -7,4 +7,6 @@ const router = Router();
 
 router.route('/register').post(ValidateRequestMiddleware.validateRequest(registerSchema), AuthController.register);
 
+router.route('/confirmation/:token').put(AuthController.confirmation);
+
 export default router;

@@ -28,7 +28,7 @@ User.hasOne(Phone_Number, {
 });
 Phone_Number.belongsTo(User, {
     foreignKey: 'userId',
-    as: 'phoneNumber',
+    as: 'user',
 });
 
 // One-to-One Associations between User and Account Confirmation
@@ -40,7 +40,7 @@ User.hasOne(Account_Confirmation, {
 });
 Account_Confirmation.belongsTo(User, {
     foreignKey: 'userId',
-    as: 'accountConfirmation',
+    as: 'user',
 });
 
 export { Role, User, Phone_Number, Account_Confirmation };

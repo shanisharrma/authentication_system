@@ -38,7 +38,7 @@ class CrudRepository<T extends Model> {
     public async update(id: number, data: Partial<T['_attributes']>): Promise<T | null> {
         const response = await this.model.findByPk(id);
         if (!response) throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
-        return await response?.update(data);
+        return await response.update(data);
     }
 }
 

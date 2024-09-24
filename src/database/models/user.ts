@@ -1,12 +1,14 @@
 'use strict';
 
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, DataTypes, Model } from 'sequelize';
+import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, DataTypes, Model, Optional } from 'sequelize';
 import connection from '../sequelize';
 import Role from './role';
 import { Quicker } from '../../utils/helpers';
-import { IUserAttributes } from '../../types';
+import { IAccountConfirmationAttributes, IPhoneNumberAttributes, IRoleAttributes, IUserAttributes } from '../../types';
 
-class User extends Model<IUserAttributes> implements IUserAttributes {
+type TUserCreationAttributes = Optional<IUserAttributes, 'id'>;
+
+class User extends Model<IUserAttributes, TUserCreationAttributes> implements IUserAttributes {
     public id!: number;
     public name!: string;
     public email!: string;
@@ -16,6 +18,11 @@ class User extends Model<IUserAttributes> implements IUserAttributes {
     public consent!: boolean;
     public readonly createdAt?: Date | undefined;
     public readonly updatedAt?: Date | undefined;
+
+    // Add Associations as optional properties
+    public roles?: IRoleAttributes[] | undefined; // many-to-many association
+    public phoneNumber?: IPhoneNumberAttributes | undefined; // One-to-One association
+    public accountConfirmation?: IAccountConfirmationAttributes | undefined; // One-to-One association
 
     declare addRole: BelongsToManyAddAssociationMixin<Role, Role['id']>;
     declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['id']>;

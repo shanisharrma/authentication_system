@@ -9,6 +9,9 @@ export interface IUserAttributes {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    roles?: IRoleAttributes[];
+    phoneNumber?: IPhoneNumberAttributes;
+    accountConfirmation?: IAccountConfirmationAttributes;
 }
 
 export interface IUserRoleAttributes {
@@ -27,6 +30,7 @@ export interface IRoleAttributes {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    users?: IUserAttributes[];
 }
 
 export interface IPhoneNumberAttributes {
@@ -38,6 +42,7 @@ export interface IPhoneNumberAttributes {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    user?: IUserAttributes;
 }
 
 export interface IAccountConfirmationAttributes {
@@ -50,13 +55,7 @@ export interface IAccountConfirmationAttributes {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
-}
-
-export interface IUserDetails {
-    user: IUserAttributes;
-    role: IRoleAttributes;
-    phoneNumber: IPhoneNumberAttributes;
-    accountConfirmation: IAccountConfirmationAttributes;
+    user?: IUserAttributes;
 }
 
 export interface IRegisterRequestBody {

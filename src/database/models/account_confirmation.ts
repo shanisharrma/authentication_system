@@ -1,10 +1,15 @@
 'use strict';
 
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import connection from '../sequelize';
-import { IAccountConfirmationAttributes } from '../../types';
+import { IAccountConfirmationAttributes, IUserAttributes } from '../../types';
 
-class Account_Confirmation extends Model<IAccountConfirmationAttributes> implements IAccountConfirmationAttributes {
+type TAccountConfirmationCreationAttributes = Optional<IAccountConfirmationAttributes, 'id'>;
+
+class Account_Confirmation
+    extends Model<IAccountConfirmationAttributes, TAccountConfirmationCreationAttributes>
+    implements IAccountConfirmationAttributes
+{
     public id!: number;
     public userId!: number;
     public status!: boolean;
@@ -13,6 +18,9 @@ class Account_Confirmation extends Model<IAccountConfirmationAttributes> impleme
     public timestamp?: Date | undefined;
     public readonly createdAt?: Date | undefined;
     public readonly updatedAt?: Date | undefined;
+
+    // Adding associations as optional properties
+    public user?: IUserAttributes | undefined; /// One-to-One association
 }
 Account_Confirmation.init(
     {

@@ -1,6 +1,6 @@
 import AppError from '../utils/errors/app-error';
 import { EApplicationEvents, EUserRole } from '../utils/constants/Enums';
-import { IRegisterRequestBody, IUserDetails } from '../types/user-types';
+import { IRegisterRequestBody, IUserAttributes } from '../types';
 import { Quicker } from '../utils/helpers';
 import { ResponseMessage } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
@@ -10,6 +10,10 @@ import AccountConfirmationService from './account-confirmation-service';
 import { ServerConfig } from '../config';
 import MailService from './mail-service';
 import { Logger } from '../utils/commons';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 class UserService {
     private userRepository: UserRepository;
@@ -95,14 +99,51 @@ class UserService {
                 Logger.error(EApplicationEvents.EMAIL_SERVICE, { meta: error });
             });
 
-            const userDetails: IUserDetails = {
-                user,
-                role,
-                phoneNumber: newPhoneNumber,
+            // sending user details
+            const userDetails: IUserAttributes = {
+                ...user,
+                roles: [role],
                 accountConfirmation,
+                phoneNumber: newPhoneNumber,
             };
 
             return userDetails;
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw new AppError(error.message, error.statusCode, error.stack);
+            }
+            throw error;
+        }
+    }
+
+    public async confirmation(data: { token: string; code: string }) {
+        try {
+            // * Fetch User by confirmation Token
+            const { token, code } = data;
+            const accountConfirmation = await this.accountConfirmationService.findUserByConfirmationToken(token, code);
+            if (!accountConfirmation || !accountConfirmation.user) {
+                throw new AppError(ResponseMessage.INVALID_ACCOUNT_CONFIRMATION_TOKEN_OR_CODE, StatusCodes.BAD_REQUEST);
+            }
+
+            // * Check User already confirmed
+            if (accountConfirmation.status) throw new AppError(ResponseMessage.ACCOUNT_ALREADY_CONFIRMED, StatusCodes.BAD_REQUEST);
+
+            // * Account Confirmation
+            const status = true;
+            const timestamp = dayjs().utc().toDate();
+            const accountConfirmed = await this.accountConfirmationService.updateAccountConfirmation(accountConfirmation.id, { status, timestamp });
+
+            // // * Create Email Body and Subject
+            const to = [accountConfirmation.user.email];
+            const subject = `Account Confirmed`;
+            const text = `Your account has been confirmed.`;
+
+            // // * Send Account Confirmation Email
+            this.mailService.sendEmail(to, subject, text).catch((error) => {
+                Logger.error(EApplicationEvents.EMAIL_SERVICE, { meta: error });
+            });
+
+            return accountConfirmed;
         } catch (error) {
             if (error instanceof AppError) {
                 throw new AppError(error.message, error.statusCode, error.stack);

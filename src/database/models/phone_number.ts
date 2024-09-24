@@ -1,10 +1,12 @@
 'use strict';
 
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import connection from '../sequelize';
-import { IPhoneNumberAttributes } from '../../types';
+import { IPhoneNumberAttributes, IUserAttributes } from '../../types';
 
-class Phone_Number extends Model<IPhoneNumberAttributes> implements IPhoneNumberAttributes {
+type TPhoneNumberCreationAttributes = Optional<IPhoneNumberAttributes, 'id'>;
+
+class Phone_Number extends Model<IPhoneNumberAttributes, TPhoneNumberCreationAttributes> implements IPhoneNumberAttributes {
     public id!: number;
     public userId!: number;
     public isoCode!: string;
@@ -12,6 +14,9 @@ class Phone_Number extends Model<IPhoneNumberAttributes> implements IPhoneNumber
     public internationalNumber!: string;
     public readonly createdAt?: Date | undefined;
     public readonly updatedAt?: Date | undefined;
+
+    // Adding associations as optional properties
+    public user?: IUserAttributes | undefined; /// One-to-One association
 }
 Phone_Number.init(
     {
