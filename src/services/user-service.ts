@@ -214,7 +214,7 @@ class UserService {
         try {
             // * Check token exists or not
             if (!token) {
-                throw new AppError(ResponseMessage.TOKEN_MISSING, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.TOKEN_MISSING, StatusCodes.UNAUTHORIZED);
             }
 
             // * Verify the token --> valid or not
@@ -234,9 +234,9 @@ class UserService {
             if (error instanceof AppError) throw error;
             if (error instanceof JsonWebTokenError) {
                 if (error instanceof TokenExpiredError) {
-                    throw new AppError(ResponseMessage.TOKEN_EXPIRED, StatusCodes.BAD_REQUEST);
+                    throw new AppError(ResponseMessage.TOKEN_EXPIRED, StatusCodes.UNAUTHORIZED);
                 }
-                throw new AppError(ResponseMessage.INVALID_TOKEN, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.INVALID_TOKEN, StatusCodes.UNAUTHORIZED);
             }
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -247,6 +247,27 @@ class UserService {
             // get user of id with all the associations
             const user = await this.userRepository.getUserWithAssociations(id);
             return user;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async logout(token: string) {
+        try {
+            // * Check token exists or not
+            if (!token) {
+                throw new AppError(ResponseMessage.TOKEN_MISSING, StatusCodes.UNAUTHORIZED);
+            }
+
+            /**
+             *
+             * Delete refresh token from the database ---> we have applied this
+             * Or change the value of revoked in the database to true for auditing or security purposes
+             *
+             * */
+            await this.refreshTokenService.deleteRefreshToken(token);
         } catch (error) {
             if (error instanceof AppError) throw error;
 

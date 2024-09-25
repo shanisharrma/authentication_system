@@ -5,6 +5,10 @@ class RefreshTokenRepository extends CrudRepository<Refresh_Token> {
     constructor() {
         super(Refresh_Token);
     }
+
+    public async destroyByRefreshToken(token: string) {
+        return await Refresh_Token.destroy({ where: { token: token } });
+    }
 }
 
 export default RefreshTokenRepository;

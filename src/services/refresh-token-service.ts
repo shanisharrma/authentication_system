@@ -1,5 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
 import { RefreshTokenRepository } from '../repositories';
 import { IRefreshTokenAttributes } from '../types';
+import { ResponseMessage } from '../utils/constants';
 import AppError from '../utils/errors/app-error';
 
 class RefreshTokenService {
@@ -11,12 +13,19 @@ class RefreshTokenService {
 
     public async createRefreshToken(payload: IRefreshTokenAttributes) {
         try {
-            // const { token, userId, expiresAt, revoked } = payload;
-
             return await this.refreshTokenRepository.create(payload);
         } catch (error) {
-            if (error instanceof AppError) throw new AppError(error.message, error.statusCode, error.data);
-            throw error;
+            if (error instanceof AppError) throw error;
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async deleteRefreshToken(token: string) {
+        try {
+            return await this.refreshTokenRepository.destroyByRefreshToken(token);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

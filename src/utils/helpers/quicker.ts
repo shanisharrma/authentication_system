@@ -77,4 +77,9 @@ export class Quicker {
     public static verifyToken(token: string, secret: string) {
         return jwt.verify(token, secret);
     }
+
+    public static getDomainFromUrl(url: string) {
+        const parsedUrl = new URL(url);
+        return parsedUrl.hostname;
+    }
 }

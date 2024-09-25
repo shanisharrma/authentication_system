@@ -17,4 +17,7 @@ router.route('/login').post(ValidateRequestMiddleware.validateRequest(loginSchem
 // Profile : GET /api/v1/profile
 router.route('/profile').get(AuthMiddleware.checkAuth, AuthController.profile);
 
+// Logout : PUT /api/v1/logout
+router.route('/logout').put(AuthMiddleware.checkAuth, AuthController.logout);
+
 export default router;

@@ -20,8 +20,9 @@ class AccountConfirmationService {
 
             return accountConfirmation;
         } catch (error) {
-            if (error instanceof AppError) throw new AppError(error.message, error.statusCode, error.data);
-            throw error;
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -35,8 +36,9 @@ class AccountConfirmationService {
             if (!account) throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
             return account;
         } catch (error) {
-            if (error instanceof AppError) throw new AppError(error.message, error.statusCode, error.data);
-            throw error;
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -45,8 +47,9 @@ class AccountConfirmationService {
             const updateAccount = await this.accountConfirmationRepository.update(id, data);
             return updateAccount;
         } catch (error) {
-            if (error instanceof AppError) throw new AppError(error.message, error.statusCode);
-            throw error;
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }
