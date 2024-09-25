@@ -8,6 +8,7 @@ import {
     IAccountConfirmationAttributes,
     ILoginRequestBody,
     IRefreshTokenAttributes,
+    IUserWithAssociations,
 } from './user-types';
 
 export {
@@ -22,4 +23,5 @@ export {
     IAccountConfirmationAttributes,
     ILoginRequestBody,
     IRefreshTokenAttributes,
+    IUserWithAssociations,
 };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AuthController } from '../../controllers';
-import { ValidateRequestMiddleware } from '../../middlewares';
+import { AuthMiddleware, ValidateRequestMiddleware } from '../../middlewares';
 import { loginSchema, registerSchema } from '../../schemas';
 
 const router = Router();
@@ -13,5 +13,8 @@ router.route('/confirmation/:token').put(AuthController.confirmation);
 
 // Login : POST /api/v1/login
 router.route('/login').post(ValidateRequestMiddleware.validateRequest(loginSchema), AuthController.login);
+
+// Profile : GET /api/v1/profile
+router.route('/profile').get(AuthMiddleware.checkAuth, AuthController.profile);
 
 export default router;

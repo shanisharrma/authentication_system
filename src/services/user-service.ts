@@ -13,8 +13,13 @@ import { Logger } from '../utils/commons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import RefreshTokenService from './refresh-token-service';
+import { JsonWebTokenError, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 
 dayjs.extend(utc);
+
+interface IDecryptedJWT extends JwtPayload {
+    userId: number;
+}
 
 class UserService {
     private userRepository: UserRepository;
@@ -114,7 +119,7 @@ class UserService {
         } catch (error) {
             if (error instanceof AppError) throw error;
 
-            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -149,7 +154,7 @@ class UserService {
         } catch (error) {
             if (error instanceof AppError) throw error;
 
-            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -201,7 +206,51 @@ class UserService {
         } catch (error) {
             if (error instanceof AppError) throw error;
 
-            throw new AppError('Something went wrong.', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async isAuthenticated(token: string) {
+        try {
+            // * Check token exists or not
+            if (!token) {
+                throw new AppError(ResponseMessage.TOKEN_MISSING, StatusCodes.BAD_REQUEST);
+            }
+
+            // * Verify the token --> valid or not
+            const { userId } = Quicker.verifyToken(token, ServerConfig.ACCESS_TOKEN.SECRET as string) as IDecryptedJWT;
+
+            // * Fetch user with token payload
+            const user = await this.userRepository.get(userId);
+
+            // * check user exists or not
+            if (!user) {
+                throw new AppError(ResponseMessage.UNAUTHORIZED, StatusCodes.UNAUTHORIZED);
+            }
+
+            // * Return user id
+            return user.id;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            if (error instanceof JsonWebTokenError) {
+                if (error instanceof TokenExpiredError) {
+                    throw new AppError(ResponseMessage.TOKEN_EXPIRED, StatusCodes.BAD_REQUEST);
+                }
+                throw new AppError(ResponseMessage.INVALID_TOKEN, StatusCodes.BAD_REQUEST);
+            }
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async profile(id: number) {
+        try {
+            // get user of id with all the associations
+            const user = await this.userRepository.getUserWithAssociations(id);
+            return user;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

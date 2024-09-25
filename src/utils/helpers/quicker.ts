@@ -73,4 +73,8 @@ export class Quicker {
             expiresIn: expiry,
         });
     }
+
+    public static verifyToken(token: string, secret: string) {
+        return jwt.verify(token, secret);
+    }
 }

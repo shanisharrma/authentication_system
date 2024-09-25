@@ -24,6 +24,10 @@ interface ILoginRequest extends Request {
     body: ILoginRequestBody;
 }
 
+interface IProfileRequest extends Request {
+    id: number;
+}
+
 export class AuthController {
     private static userService: UserService = new UserService();
 
@@ -64,14 +68,7 @@ export class AuthController {
 
             const { accessToken, refreshToken } = response;
 
-            res.cookie('accessToken', accessToken, {
-                path: '/api/v1',
-                domain: DOMAIN,
-                sameSite: 'strict',
-                maxAge: 1000 * ServerConfig.ACCESS_TOKEN.EXPIRY,
-                httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
-            }).cookie('refreshToken', refreshToken, {
+            res.cookie('refreshToken', refreshToken, {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
@@ -80,7 +77,20 @@ export class AuthController {
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             });
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, response);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, accessToken);
+        } catch (error) {
+            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static async profile(req: Request, res: Response, next: NextFunction) {
+        try {
+            // extract id from IProfileRequest
+            const { id } = req as IProfileRequest;
+            // get user with id
+            const user = await AuthController.userService.profile(id);
+
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, user);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }

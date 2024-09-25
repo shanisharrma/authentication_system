@@ -1,4 +1,5 @@
-import { User } from '../database';
+import { Account_Confirmation, Phone_Number, Role, User } from '../database';
+import { IUserWithAssociations } from '../types/user-types';
 import CrudRepository from './crud-repository';
 
 class UserRepository extends CrudRepository<User> {
@@ -19,6 +20,18 @@ class UserRepository extends CrudRepository<User> {
     public async getUserWithPasswordById(id: number) {
         const user = User.scope('withPassword').findByPk(id);
         return user;
+    }
+
+    public async getUserWithAssociations(id: number) {
+        const userWithAssociations: IUserWithAssociations | null = await User.findOne({
+            where: { id: id },
+            include: [
+                { model: Role, required: true, as: 'roles' },
+                { model: Phone_Number, required: true, as: 'phoneNumber' },
+                { model: Account_Confirmation, required: true, as: 'accountConfirmation' },
+            ],
+        });
+        return userWithAssociations;
     }
 }
 

@@ -1,3 +1,14 @@
+export type WithAssociations<T, Associations> = T & Partial<Associations>;
+
+export type IUserWithAssociations = WithAssociations<
+    IUserAttributes,
+    {
+        roles: IRoleAttributes[];
+        phoneNumber: IPhoneNumberAttributes;
+        accountConfirmation: IAccountConfirmationAttributes;
+    }
+>;
+
 export interface IUserAttributes {
     id?: number;
     name: string;
@@ -12,6 +23,7 @@ export interface IUserAttributes {
     roles?: IRoleAttributes[];
     phoneNumber?: IPhoneNumberAttributes;
     accountConfirmation?: IAccountConfirmationAttributes;
+    refreshToken?: IRefreshTokenAttributes[];
 }
 
 export interface IUserRoleAttributes {
@@ -67,6 +79,7 @@ export interface IRefreshTokenAttributes {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    user?: IUserAttributes;
 }
 
 export interface IRegisterRequestBody {
