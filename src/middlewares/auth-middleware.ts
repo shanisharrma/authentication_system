@@ -19,7 +19,7 @@ class AuthMiddleware {
             const { accessToken } = cookies;
             // Check access token exist or not
             if (!accessToken) {
-                throw new AppError(ResponseMessage.AUTHORIZATION_TOKEN_MISSING, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.AUTHORIZATION_TOKEN_MISSING, StatusCodes.UNAUTHORIZED);
             }
 
             // Authenticate the token

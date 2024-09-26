@@ -388,6 +388,45 @@ class UserService {
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async changePassword(id: number, oldPassword: string, newPassword: string) {
+        try {
+            // * Find user by Id
+            const userWithPassword = await this.userRepository.getUserWithPasswordById(id);
+            if (!userWithPassword) {
+                throw new AppError(ResponseMessage.NOT_FOUND('User'), StatusCodes.NOT_FOUND);
+            }
+
+            // * Check if old password is matching with stored password
+            const isPasswordMatched = await Quicker.comparePassword(oldPassword, userWithPassword.password);
+            if (!isPasswordMatched) {
+                throw new AppError(ResponseMessage.INVALID_OLD_PASSWORD, StatusCodes.BAD_REQUEST);
+            }
+
+            // * Check if new Password is same
+            if (newPassword === oldPassword) {
+                throw new AppError(ResponseMessage.PASSWORD_MATCHING_WITH_OLD_PASSWORD, StatusCodes.BAD_REQUEST);
+            }
+
+            // * Hash new password
+            const hashedPassword = await Quicker.hashPassword(newPassword);
+
+            // * Update user with new hashed password
+            await this.userRepository.update(userWithPassword.id, { password: hashedPassword });
+
+            // * Prepare mail
+            const to = [userWithPassword.email];
+            const subject = `Password Changed`;
+            const text = `Hey ${userWithPassword.name}, Your account password changed successfully.`;
+
+            // * Send Email
+            this.mailService.sendEmail(to, subject, text);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export default UserService;

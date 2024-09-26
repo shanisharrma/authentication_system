@@ -15,6 +15,8 @@ export default {
     ACCOUNT_CONFIRMATION_REQUIRED: `Account confirmation required.`,
     RESET_PASSWORD_MISSING: `Reset password token missing.`,
     EXPIRED_URL: `Your password reset url is expired.`,
+    INVALID_OLD_PASSWORD: `Invalid old password.`,
+    PASSWORD_MATCHING_WITH_OLD_PASSWORD: `Password matching with old password.`,
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`,
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`,

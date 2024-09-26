@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
+import { IChangePasswordRequestBody, IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
 
 export const registerSchema = Joi.object<IRegisterRequestBody, true>({
     name: Joi.string().min(2).max(72).trim().required(),
@@ -20,4 +20,10 @@ export const forgotPasswordSchema = Joi.object<IForgotPasswordRequestBody, true>
 
 export const resetPasswordSchema = Joi.object<IResetPasswordRequestBody, true>({
     newPassword: Joi.string().min(8).max(24).trim().required(),
+});
+
+export const changePasswordSchema = Joi.object<IChangePasswordRequestBody, true>({
+    oldPassword: Joi.string().min(8).max(24).trim().required(),
+    newPassword: Joi.string().min(8).max(24).trim().required(),
+    confirmNewPassword: Joi.string().min(8).max(24).trim().valid(Joi.ref('newPassword')).required(),
 });

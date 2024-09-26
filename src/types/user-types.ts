@@ -123,3 +123,9 @@ export interface IForgotPasswordRequestBody {
 export interface IResetPasswordRequestBody {
     newPassword: string;
 }
+
+export interface IChangePasswordRequestBody {
+    oldPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}

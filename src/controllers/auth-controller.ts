@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpError, HttpResponse } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
-import { IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
+import { IChangePasswordRequestBody, IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
 import { EApplicationEnvironment, ResponseMessage } from '../utils/constants';
 import { UserService } from '../services';
 import { ServerConfig } from '../config';
@@ -38,6 +38,11 @@ interface IResetPasswordRequest extends Request {
         token: string;
     };
     body: IResetPasswordRequestBody;
+}
+
+interface IChangePasswordRequest extends Request {
+    id: number;
+    body: IChangePasswordRequestBody;
 }
 
 export class AuthController {
@@ -199,6 +204,21 @@ export class AuthController {
             const { token } = params;
             //
             await AuthController.userService.resetPassword(token, newPassword);
+
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+        } catch (error) {
+            // Handle errors by passing them to the next middleware.
+            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static async changePassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            // * parse the request body
+            const { body, id } = req as IChangePasswordRequest;
+            const { oldPassword, newPassword } = body;
+
+            await AuthController.userService.changePassword(id, oldPassword, newPassword);
 
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
         } catch (error) {

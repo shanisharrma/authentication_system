@@ -15,6 +15,7 @@ import {
     IResetPasswordAttributes,
     IResetPasswordRequestBody,
     TResetPasswordWithUser,
+    IChangePasswordRequestBody,
 } from './user-types';
 
 export {
@@ -36,4 +37,5 @@ export {
     IResetPasswordAttributes,
     IResetPasswordRequestBody,
     TResetPasswordWithUser,
+    IChangePasswordRequestBody,
 };
