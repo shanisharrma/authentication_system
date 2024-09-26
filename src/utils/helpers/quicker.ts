@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { randomInt } from 'crypto';
 import jwt from 'jsonwebtoken';
+import dayjs from 'dayjs';
 
 export class Quicker {
     public static getSystemHealth() {
@@ -81,5 +82,9 @@ export class Quicker {
     public static getDomainFromUrl(url: string) {
         const parsedUrl = new URL(url);
         return parsedUrl.hostname;
+    }
+
+    public static generateResetPasswordExpiry(minute: number) {
+        return dayjs().valueOf() + minute * 60 * 1000;
     }
 }

@@ -2,24 +2,24 @@
 
 import { DataTypes, Model, Optional } from 'sequelize';
 import connection from '../sequelize';
-import { IRefreshTokenAttributes, IUserAttributes } from '../../types';
+import { IResetPasswordAttributes, IUserAttributes } from '../../types';
 
-type TRefreshTokenCreationAttributes = Optional<IRefreshTokenAttributes, 'id'>;
+type IResetPasswordCreationAttributes = Optional<IResetPasswordAttributes, 'id'>;
 
-class Refresh_Token extends Model<IRefreshTokenAttributes, TRefreshTokenCreationAttributes> implements IRefreshTokenAttributes {
+class Reset_Password extends Model<IResetPasswordCreationAttributes, IResetPasswordAttributes> implements IResetPasswordAttributes {
     public id!: number;
     public userId!: number;
     public token!: string;
-    public expiresAt!: Date;
-    public revoked?: boolean;
-    public readonly createdAt?: Date;
-    public readonly updatedAt?: Date;
+    public expiresAt!: number;
+    public used!: boolean;
+    public lastResetAt?: Date | undefined;
+    public readonly createdAt?: Date | undefined;
+    public readonly updatedAt?: Date | undefined;
 
     // Adding associations as optional properties
     public user?: IUserAttributes | undefined;
 }
-
-Refresh_Token.init(
+Reset_Password.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -36,19 +36,22 @@ Refresh_Token.init(
             allowNull: false,
         },
         expiresAt: {
-            type: DataTypes.DATE,
+            type: DataTypes.BIGINT,
             allowNull: false,
         },
-        revoked: {
+        lastResetAt: {
+            type: DataTypes.DATE,
+        },
+        used: {
             type: DataTypes.BOOLEAN,
-            allowNull: true,
+            defaultValue: false,
         },
     },
     {
         sequelize: connection,
-        modelName: 'Refresh_Token',
+        modelName: 'Reset_Password',
     },
 );
 
-export default Refresh_Token;
+export default Reset_Password;
 

@@ -4,7 +4,14 @@ import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, Da
 import connection from '../sequelize';
 import Role from './role';
 import { Quicker } from '../../utils/helpers';
-import { IAccountConfirmationAttributes, IPhoneNumberAttributes, IRefreshTokenAttributes, IRoleAttributes, IUserAttributes } from '../../types';
+import {
+    IAccountConfirmationAttributes,
+    IPhoneNumberAttributes,
+    IRefreshTokenAttributes,
+    IResetPasswordAttributes,
+    IRoleAttributes,
+    IUserAttributes,
+} from '../../types';
 
 type TUserCreationAttributes = Optional<IUserAttributes, 'id'>;
 
@@ -24,6 +31,7 @@ class User extends Model<IUserAttributes, TUserCreationAttributes> implements IU
     public phoneNumber?: IPhoneNumberAttributes | undefined; // One-to-One association
     public accountConfirmation?: IAccountConfirmationAttributes | undefined; // One-to-One association
     public refreshToken?: IRefreshTokenAttributes[] | undefined; // One-to-Many association
+    public resetPassword?: IResetPasswordAttributes[] | undefined; // One-to-Many association
 
     declare addRole: BelongsToManyAddAssociationMixin<Role, Role['id']>;
     declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['id']>;

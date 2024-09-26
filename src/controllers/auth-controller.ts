@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpError, HttpResponse } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
-import { ILoginRequestBody, IRegisterRequestBody } from '../types/user-types';
+import { IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody } from '../types';
 import { EApplicationEnvironment, ResponseMessage } from '../utils/constants';
 import { UserService } from '../services';
-import AppError from '../utils/errors/app-error';
 import { ServerConfig } from '../config';
 import { Quicker } from '../utils/helpers';
+import { AppError } from '../utils/errors';
 
 interface IRegisterRequest extends Request {
     body: IRegisterRequestBody;
@@ -27,6 +27,10 @@ interface ILoginRequest extends Request {
 
 interface IProfileRequest extends Request {
     id: number;
+}
+
+interface IForgotPasswordRequest extends Request {
+    body: IForgotPasswordRequestBody;
 }
 
 export class AuthController {
@@ -162,6 +166,21 @@ export class AuthController {
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, accessToken);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static async forgotPassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            // * parse the request body
+            const { body } = req as IForgotPasswordRequest;
+            const { email } = body;
+            //
+            await AuthController.userService.forgotPassword(email);
+
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+        } catch (error) {
+            // Handle errors by passing them to the next middleware.
+            HttpError(next, error, req, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

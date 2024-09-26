@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import RefreshTokenService from './refresh-token-service';
 import { JsonWebTokenError, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
+import ResetPasswordService from './reset-password-service';
 
 dayjs.extend(utc);
 
@@ -28,6 +29,7 @@ class UserService {
     private accountConfirmationService: AccountConfirmationService;
     private mailService: MailService;
     private refreshTokenService: RefreshTokenService;
+    private resetPasswordService: ResetPasswordService;
 
     constructor() {
         this.userRepository = new UserRepository();
@@ -36,6 +38,7 @@ class UserService {
         this.accountConfirmationService = new AccountConfirmationService();
         this.mailService = new MailService();
         this.refreshTokenService = new RefreshTokenService();
+        this.resetPasswordService = new ResetPasswordService();
     }
 
     public async register(data: IRegisterRequestBody) {
@@ -293,6 +296,39 @@ class UserService {
             );
 
             return accessToken;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async forgotPassword(email: string) {
+        try {
+            // * Find user by email address
+            const user = await this.userRepository.getUserWithAccountConfirmationByEmail(email);
+            if (!user) {
+                throw new AppError(ResponseMessage.NOT_FOUND('User'), StatusCodes.NOT_FOUND);
+            }
+
+            // * Check if user account is confirmed
+            if (user.accountConfirmation && !user.accountConfirmation.status) {
+                throw new AppError(ResponseMessage.ACCOUNT_CONFIRMATION_REQUIRED, StatusCodes.UNAUTHORIZED);
+            }
+            // * Generate Password reset Token and URL expiry
+            const token = Quicker.generateRandomId();
+            const expiresAt = Quicker.generateResetPasswordExpiry(15);
+
+            // * Create reset Password
+            await this.resetPasswordService.createResetPassword({ token, userId: user.id!, expiresAt });
+
+            // * Send email regarding forgot password
+            const resetPasswordURL = `${ServerConfig.FRONTEND_URL}/reset-password/${token}`;
+            const to = [user.email];
+            const subject = `Reset Your Account Password`;
+            const text = `Hey ${user.name}, Please reset your account password by clicking on the line below.\n\n${resetPasswordURL}\n\nLink will expire within 15 minutes.`;
+
+            this.mailService.sendEmail(to, subject, text);
         } catch (error) {
             if (error instanceof AppError) throw error;
 

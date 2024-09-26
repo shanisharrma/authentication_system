@@ -9,6 +9,10 @@ import {
     ILoginRequestBody,
     IRefreshTokenAttributes,
     IUserWithAssociations,
+    IForgotPasswordRequestBody,
+    IUserWithAccountConfirmation,
+    WithAssociations,
+    IResetPasswordAttributes,
 } from './user-types';
 
 export {
@@ -24,4 +28,8 @@ export {
     ILoginRequestBody,
     IRefreshTokenAttributes,
     IUserWithAssociations,
+    IForgotPasswordRequestBody,
+    IUserWithAccountConfirmation,
+    WithAssociations,
+    IResetPasswordAttributes,
 };

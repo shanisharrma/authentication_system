@@ -12,6 +12,7 @@ export default {
     INVALID_AUTHORIZATION_TOKEN: `Invalid authorization token.`,
     UNAUTHORIZED: `You are not authorized to perform this action.`,
     SESSION_EXPIRED: `Session expired.`,
+    ACCOUNT_CONFIRMATION_REQUIRED: `Account confirmation required.`,
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`,
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`,

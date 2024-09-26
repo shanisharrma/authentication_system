@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { AuthController } from '../../controllers';
 import { AuthMiddleware, ValidateRequestMiddleware } from '../../middlewares';
 import { loginSchema, registerSchema } from '../../schemas';
+import { forgotPasswordSchema } from '../../schemas/auth-schema';
 
 const router = Router();
 
@@ -22,5 +23,8 @@ router.route('/logout').put(AuthMiddleware.checkAuth, AuthController.logout);
 
 // Refresh Token : POST /api/v1/refresh-token
 router.route('/refresh-token').post(AuthController.refreshToken);
+
+// Forgot Password : PUT /api/v1/forgot-password
+router.route('/forgot-password').post(ValidateRequestMiddleware.validateRequest(forgotPasswordSchema), AuthController.forgotPassword);
 
 export default router;

@@ -9,6 +9,8 @@ export type IUserWithAssociations = WithAssociations<
     }
 >;
 
+export type IUserWithAccountConfirmation = WithAssociations<IUserAttributes, { accountConfirmation: IAccountConfirmationAttributes }>;
+
 export interface IUserAttributes {
     id?: number;
     name: string;
@@ -24,6 +26,7 @@ export interface IUserAttributes {
     phoneNumber?: IPhoneNumberAttributes;
     accountConfirmation?: IAccountConfirmationAttributes;
     refreshToken?: IRefreshTokenAttributes[];
+    resetPassword?: IResetPasswordAttributes[];
 }
 
 export interface IUserRoleAttributes {
@@ -82,6 +85,19 @@ export interface IRefreshTokenAttributes {
     user?: IUserAttributes;
 }
 
+export interface IResetPasswordAttributes {
+    id?: number;
+    userId: number;
+    token: string;
+    expiresAt: number;
+    lastResetAt?: Date;
+    used?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
+    user?: IUserAttributes;
+}
+
 export interface IRegisterRequestBody {
     name: string;
     email: string;
@@ -93,4 +109,8 @@ export interface IRegisterRequestBody {
 export interface ILoginRequestBody {
     email: string;
     password: string;
+}
+
+export interface IForgotPasswordRequestBody {
+    email: string;
 }
