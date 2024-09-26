@@ -371,6 +371,7 @@ class UserService {
             const storedExpiry = resetPassDetails.expiresAt;
             const currentTimestamp = dayjs().valueOf();
             if (currentTimestamp > storedExpiry) {
+                await this.resetPasswordService.deleteResetPassword(resetPassDetails.id!);
                 throw new AppError(ResponseMessage.EXPIRED_RESET_PASSWORD_URL, StatusCodes.BAD_REQUEST);
             }
 

@@ -42,6 +42,15 @@ class ResetPasswordService {
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async deleteResetPassword(id: number) {
+        try {
+            return await this.resetPasswordRepository.destroy(id);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export default ResetPasswordService;
