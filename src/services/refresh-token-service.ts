@@ -37,6 +37,24 @@ class RefreshTokenService {
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async findRefreshTokenByUserId(userId: number) {
+        try {
+            return await this.refreshTokenRepository.findRefreshTokenByUserId(userId);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async updateRefreshToken(id: number, options: Partial<IRefreshTokenAttributes>) {
+        try {
+            return this.refreshTokenRepository.update(id, options);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export default RefreshTokenService;

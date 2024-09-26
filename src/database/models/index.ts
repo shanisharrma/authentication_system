@@ -45,10 +45,10 @@ Account_Confirmation.belongsTo(User, {
     as: 'user',
 });
 
-// One-to-Many Association between User and Refresh Token
-User.hasMany(Refresh_Token, {
+// One-to-One Association between User and Refresh Token
+User.hasOne(Refresh_Token, {
     foreignKey: 'userId',
-    as: 'refreshTokens',
+    as: 'refreshToken',
     onDelete: 'CASCADE',
 });
 Refresh_Token.belongsTo(User, {

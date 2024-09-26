@@ -30,7 +30,7 @@ export interface IUserAttributes {
     roles?: IRoleAttributes[];
     phoneNumber?: IPhoneNumberAttributes;
     accountConfirmation?: IAccountConfirmationAttributes;
-    refreshToken?: IRefreshTokenAttributes[];
+    refreshToken?: IRefreshTokenAttributes;
     resetPassword?: IResetPasswordAttributes;
 }
 

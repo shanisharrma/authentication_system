@@ -38,6 +38,6 @@ export default {
     // Refresh Token
     REFRESH_TOKEN: {
         SECRET: process.env.REFRESH_TOKEN_SECRET,
-        EXPIRY: 3600 * 24 * 30,
+        EXPIRY: 3600 * 24 * 14,
     },
 };

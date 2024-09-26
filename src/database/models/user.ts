@@ -30,7 +30,7 @@ class User extends Model<IUserAttributes, TUserCreationAttributes> implements IU
     public roles?: IRoleAttributes[] | undefined; // many-to-many association
     public phoneNumber?: IPhoneNumberAttributes | undefined; // One-to-One association
     public accountConfirmation?: IAccountConfirmationAttributes | undefined; // One-to-One association
-    public refreshToken?: IRefreshTokenAttributes[] | undefined; // One-to-Many association
+    public refreshToken?: IRefreshTokenAttributes | undefined; // One-to-Many association
     public resetPassword?: IResetPasswordAttributes | undefined; // One-to-One association
 
     declare addRole: BelongsToManyAddAssociationMixin<Role, Role['id']>;

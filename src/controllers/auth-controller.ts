@@ -75,6 +75,7 @@ export class AuthController {
     public static async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { body } = req as ILoginRequest;
+
             const response = await AuthController.userService.login(body);
 
             // * Set Tokens to Response Cookie
@@ -137,7 +138,7 @@ export class AuthController {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
-                maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
+                maxAge: 1000 * ServerConfig.ACCESS_TOKEN.EXPIRY,
                 httpOnly: true,
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             }).clearCookie('refreshToken', {
@@ -171,7 +172,7 @@ export class AuthController {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
-                maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
+                maxAge: 1000 * ServerConfig.ACCESS_TOKEN.EXPIRY,
                 httpOnly: true,
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             });

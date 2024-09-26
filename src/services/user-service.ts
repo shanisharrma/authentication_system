@@ -195,7 +195,7 @@ class UserService {
             const lastLoginAt = dayjs().utc().toDate();
             await this.userRepository.update(user.id, { lastLoginAt });
 
-            // * Refresh Token store
+            // * Create Refresh Token Payload
             const refreshTokenPayload: IRefreshTokenAttributes = {
                 token: refreshToken,
                 userId: user.id,
@@ -203,7 +203,13 @@ class UserService {
                 revoked: false,
             };
 
-            await this.refreshTokenService.createRefreshToken(refreshTokenPayload);
+            // * Check if refresh token exists for the user
+            const rft = await this.refreshTokenService.findRefreshTokenByUserId(user.id);
+            if (rft && rft.token) {
+                await this.refreshTokenService.updateRefreshToken(rft.id, refreshTokenPayload);
+            } else {
+                await this.refreshTokenService.createRefreshToken(refreshTokenPayload);
+            }
 
             return { accessToken, refreshToken };
         } catch (error) {
@@ -281,14 +287,19 @@ class UserService {
             if (!token) {
                 throw new AppError(ResponseMessage.NOT_FOUND('Token'), StatusCodes.NOT_FOUND);
             }
-            // Get details of refresh token
+            // * Get details of refresh token
             const rftDetails = await this.refreshTokenService.findRefreshToken(token);
             if (!rftDetails) {
                 throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.CONFLICT);
             }
+            if (rftDetails.expiresAt.getTime() < new Date().getTime()) {
+                await this.refreshTokenService.deleteRefreshToken(token);
+                throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.CONFLICT);
+            }
+            // * Get user id from rftDetails
             const { userId } = rftDetails;
 
-            // generate new access token
+            // * Generate new access token
             const accessToken = Quicker.generateToken(
                 { userId: userId },
                 ServerConfig.ACCESS_TOKEN.SECRET as string,
@@ -331,7 +342,7 @@ class UserService {
             // * Send email regarding forgot password
             const resetPasswordURL = `${ServerConfig.FRONTEND_URL}/reset-password/${token}`;
             const to = [user.email];
-            const subject = `Reset Your Account Password`;
+            const subject = `Account Password Reset Requested`;
             const text = `Hey ${user.name}, Please reset your account password by clicking on the line below.\n\n${resetPasswordURL}\n\nLink will expire within 15 minutes.`;
 
             this.mailService.sendEmail(to, subject, text);
@@ -378,7 +389,7 @@ class UserService {
 
             // * Send Email
             const to = [resetPassDetails.user!.email];
-            const subject = `Reset Account Password Success`;
+            const subject = `Account Password Reset`;
             const text = `Hey ${resetPassDetails.user?.name}, Your account password reset has been successfully performed.`;
 
             this.mailService.sendEmail(to, subject, text);
