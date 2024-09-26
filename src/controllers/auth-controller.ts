@@ -54,7 +54,7 @@ export class AuthController {
 
             const response = await AuthController.userService.register(body);
 
-            HttpResponse(req, res, StatusCodes.CREATED, ResponseMessage.SUCCESS, { user: response.id });
+            HttpResponse(req, res, StatusCodes.CREATED, ResponseMessage.REGISTRATION_SUCCESS, { user: response.id });
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -66,7 +66,7 @@ export class AuthController {
 
             const response = await AuthController.userService.confirmation({ token: params.token, code: query.code });
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, response);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.ACCOUNT_VERIFIED, response);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -101,7 +101,7 @@ export class AuthController {
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             });
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, accessToken);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.LOGIN_SUCCESS, accessToken);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -114,7 +114,7 @@ export class AuthController {
             // get user with id
             const user = await AuthController.userService.profile(id);
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, user);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.PROFILE_SUCCESS, user);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -150,7 +150,7 @@ export class AuthController {
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             });
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.LOGIN_SUCCESS);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -176,7 +176,7 @@ export class AuthController {
                 httpOnly: true,
                 secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
             });
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, accessToken);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.TOKEN_REFRESH_SUCCESS, accessToken);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -190,7 +190,7 @@ export class AuthController {
             //
             await AuthController.userService.forgotPassword(email);
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.FORGOT_PASSWORD_SENT_SUCCESS);
         } catch (error) {
             // Handle errors by passing them to the next middleware.
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
@@ -206,7 +206,7 @@ export class AuthController {
             //
             await AuthController.userService.resetPassword(token, newPassword);
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.PASSWORD_RESET_SUCCESS);
         } catch (error) {
             // Handle errors by passing them to the next middleware.
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
@@ -221,7 +221,7 @@ export class AuthController {
 
             await AuthController.userService.changePassword(id, oldPassword, newPassword);
 
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.PASSWORD_CHANGE_SUCCESS);
         } catch (error) {
             // Handle errors by passing them to the next middleware.
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);

@@ -18,7 +18,7 @@ class CrudRepository<T extends Model> {
     public async get(id: number): Promise<T | null> {
         const response = await this.model.findByPk(id);
         if (!response) {
-            throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
+            throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);
         }
         return response;
     }
@@ -34,14 +34,14 @@ class CrudRepository<T extends Model> {
 
     public async destroy(id: number): Promise<boolean> {
         const response = await this.model.findByPk(id);
-        if (!response) throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
+        if (!response) throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);
         await response.destroy();
         return true;
     }
 
     public async update(id: number, data: Partial<T['_attributes']>): Promise<T | null> {
         const response = await this.model.findByPk(id);
-        if (!response) throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
+        if (!response) throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);
         return await response.update(data);
     }
 }

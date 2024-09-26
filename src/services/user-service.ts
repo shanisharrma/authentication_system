@@ -63,7 +63,7 @@ class UserService {
             // * Check if user exists or not
             const exitingUser = await this.userRepository.findOneByEmail(email);
             if (exitingUser) {
-                throw new AppError(ResponseMessage.ALREADY_EXIST('user', email), StatusCodes.FORBIDDEN);
+                throw new AppError(ResponseMessage.EMAIL_ALREADY_IN_USE, StatusCodes.FORBIDDEN);
             }
 
             // * Creating User
@@ -81,7 +81,7 @@ class UserService {
             if (role) {
                 user.addRole(role);
             } else {
-                throw new AppError(ResponseMessage.NOT_FOUND('role'), StatusCodes.NOT_FOUND);
+                throw new AppError(ResponseMessage.NOT_FOUND('Role'), StatusCodes.NOT_FOUND);
             }
 
             // * Creating Phone Number entry
@@ -132,11 +132,11 @@ class UserService {
             const { token, code } = data;
             const accountConfirmation = await this.accountConfirmationService.findUserByConfirmationToken(token, code);
             if (!accountConfirmation || !accountConfirmation.user) {
-                throw new AppError(ResponseMessage.INVALID_ACCOUNT_CONFIRMATION_TOKEN_OR_CODE, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.INVALID_VERIFICATION_CODE_TOKEN, StatusCodes.BAD_REQUEST);
             }
 
             // * Check User already confirmed
-            if (accountConfirmation.status) throw new AppError(ResponseMessage.ACCOUNT_ALREADY_CONFIRMED, StatusCodes.BAD_REQUEST);
+            if (accountConfirmation.status) throw new AppError(ResponseMessage.ACCOUNT_ALREADY_VERIFIED, StatusCodes.BAD_REQUEST);
 
             // * Account Confirmation
             const status = true;
@@ -169,13 +169,13 @@ class UserService {
             // * Find user
             const user = await this.userRepository.findOneByEmailWithPassword(email);
             if (!user) {
-                throw new AppError(ResponseMessage.INCORRECT_EMAIL_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.INVALID_CREDENTIALS, StatusCodes.UNAUTHORIZED);
             }
 
             // * Validate password
             const isPasswordMatched = await Quicker.comparePassword(password, user.password);
             if (!isPasswordMatched) {
-                throw new AppError(ResponseMessage.INCORRECT_EMAIL_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.INVALID_CREDENTIALS, StatusCodes.UNAUTHORIZED);
             }
 
             // * access token and refresh token
@@ -234,7 +234,7 @@ class UserService {
 
             // * check user exists or not
             if (!user) {
-                throw new AppError(ResponseMessage.UNAUTHORIZED, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.AUTHORIZATION_REQUIRED, StatusCodes.UNAUTHORIZED);
             }
 
             // * Return user id
@@ -290,11 +290,11 @@ class UserService {
             // * Get details of refresh token
             const rftDetails = await this.refreshTokenService.findRefreshToken(token);
             if (!rftDetails) {
-                throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.CONFLICT);
+                throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.UNAUTHORIZED);
             }
             if (rftDetails.expiresAt.getTime() < new Date().getTime()) {
                 await this.refreshTokenService.deleteRefreshToken(token);
-                throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.CONFLICT);
+                throw new AppError(ResponseMessage.SESSION_EXPIRED, StatusCodes.UNAUTHORIZED);
             }
             // * Get user id from rftDetails
             const { userId } = rftDetails;
@@ -324,7 +324,7 @@ class UserService {
 
             // * Check if user account is confirmed
             if (user.accountConfirmation && !user.accountConfirmation.status) {
-                throw new AppError(ResponseMessage.ACCOUNT_CONFIRMATION_REQUIRED, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.ACCOUNT_NOT_VERIFIED, StatusCodes.FORBIDDEN);
             }
             // * Generate Password reset Token and URL expiry
             const token = Quicker.generateRandomId();
@@ -364,14 +364,14 @@ class UserService {
             // * check if user account is confirmed
             const accountConfirmation = await this.accountConfirmationService.getAccountConfirmationByUserId(resetPassDetails.userId);
             if (accountConfirmation && !accountConfirmation.status) {
-                throw new AppError(ResponseMessage.ACCOUNT_CONFIRMATION_REQUIRED, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.ACCOUNT_NOT_VERIFIED, StatusCodes.FORBIDDEN);
             }
 
             // * check expiry of the url
             const storedExpiry = resetPassDetails.expiresAt;
             const currentTimestamp = dayjs().valueOf();
             if (currentTimestamp > storedExpiry) {
-                throw new AppError(ResponseMessage.EXPIRED_URL, StatusCodes.UNAUTHORIZED);
+                throw new AppError(ResponseMessage.EXPIRED_RESET_PASSWORD_URL, StatusCodes.BAD_REQUEST);
             }
 
             // * Has new password
@@ -411,12 +411,12 @@ class UserService {
             // * Check if old password is matching with stored password
             const isPasswordMatched = await Quicker.comparePassword(oldPassword, userWithPassword.password);
             if (!isPasswordMatched) {
-                throw new AppError(ResponseMessage.INVALID_OLD_PASSWORD, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.INCORRECT_CURRENT_PASSWORD, StatusCodes.BAD_REQUEST);
             }
 
             // * Check if new Password is same
             if (newPassword === oldPassword) {
-                throw new AppError(ResponseMessage.PASSWORD_MATCHING_WITH_OLD_PASSWORD, StatusCodes.BAD_REQUEST);
+                throw new AppError(ResponseMessage.SIMILAR_CURRENT_PASSWORD_AND_NEW_PASSWORD, StatusCodes.BAD_REQUEST);
             }
 
             // * Hash new password

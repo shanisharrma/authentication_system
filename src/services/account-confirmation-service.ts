@@ -33,7 +33,7 @@ class AccountConfirmationService {
                 include: [{ model: User, required: true, as: 'user' }],
             });
 
-            if (!account) throw new AppError(ResponseMessage.RESOURCE_NOT_FOUND, StatusCodes.NOT_FOUND);
+            if (!account) throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);
             return account;
         } catch (error) {
             if (error instanceof AppError) throw error;
