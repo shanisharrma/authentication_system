@@ -52,6 +52,17 @@ class AccountConfirmationService {
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async getAccountConfirmationByUserId(userId: number) {
+        try {
+            const accountConfirmation = await this.accountConfirmationRepository.getAccountConfirmationByUserId(userId);
+            return accountConfirmation;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export default AccountConfirmationService;

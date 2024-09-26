@@ -13,6 +13,8 @@ export default {
     UNAUTHORIZED: `You are not authorized to perform this action.`,
     SESSION_EXPIRED: `Session expired.`,
     ACCOUNT_CONFIRMATION_REQUIRED: `Account confirmation required.`,
+    RESET_PASSWORD_MISSING: `Reset password token missing.`,
+    EXPIRED_URL: `Your password reset url is expired.`,
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`,
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`,

@@ -57,9 +57,9 @@ Refresh_Token.belongsTo(User, {
 });
 
 // One-to-Many Association between User and Reset Password
-User.hasMany(Reset_Password, {
+User.hasOne(Reset_Password, {
     foreignKey: 'userId',
-    as: 'resetPasswords',
+    as: 'resetPassword',
     onDelete: 'CASCADE',
 });
 Reset_Password.belongsTo(User, {

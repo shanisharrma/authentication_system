@@ -1,6 +1,6 @@
 import AppError from '../utils/errors/app-error';
 import { EApplicationEvents, EUserRole } from '../utils/constants/Enums';
-import { ILoginRequestBody, IRefreshTokenAttributes, IRegisterRequestBody, IUserAttributes } from '../types';
+import { ILoginRequestBody, IRefreshTokenAttributes, IRegisterRequestBody, IResetPasswordAttributes, IUserAttributes } from '../types';
 import { Quicker } from '../utils/helpers';
 import { ResponseMessage } from '../utils/constants';
 import { StatusCodes } from 'http-status-codes';
@@ -306,7 +306,7 @@ class UserService {
     public async forgotPassword(email: string) {
         try {
             // * Find user by email address
-            const user = await this.userRepository.getUserWithAccountConfirmationByEmail(email);
+            const user = await this.userRepository.getUserWithAccountConfirmationAndResetPasswordByEmail(email);
             if (!user) {
                 throw new AppError(ResponseMessage.NOT_FOUND('User'), StatusCodes.NOT_FOUND);
             }
@@ -319,14 +319,67 @@ class UserService {
             const token = Quicker.generateRandomId();
             const expiresAt = Quicker.generateResetPasswordExpiry(15);
 
-            // * Create reset Password
-            await this.resetPasswordService.createResetPassword({ token, userId: user.id!, expiresAt });
+            // * Check if the user has reset password before
+            if (user.resetPassword && (user.resetPassword.used || user.resetPassword.token)) {
+                // * Update the existing reset password record
+                await this.resetPasswordService.updateResetPassword(user.resetPassword.id!, { token, expiresAt });
+            } else {
+                // * Create reset Password
+                await this.resetPasswordService.createResetPassword({ token, userId: user.id!, expiresAt });
+            }
 
             // * Send email regarding forgot password
             const resetPasswordURL = `${ServerConfig.FRONTEND_URL}/reset-password/${token}`;
             const to = [user.email];
             const subject = `Reset Your Account Password`;
             const text = `Hey ${user.name}, Please reset your account password by clicking on the line below.\n\n${resetPasswordURL}\n\nLink will expire within 15 minutes.`;
+
+            this.mailService.sendEmail(to, subject, text);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async resetPassword(token: string, password: string) {
+        try {
+            // * Fetch user by token
+            const resetPassDetails = await this.resetPasswordService.getResetPasswordWithUser(token);
+            if (!resetPassDetails || (resetPassDetails && !resetPassDetails.user)) {
+                throw new AppError(ResponseMessage.NOT_FOUND('User'), StatusCodes.NOT_FOUND);
+            }
+
+            // * check if user account is confirmed
+            const accountConfirmation = await this.accountConfirmationService.getAccountConfirmationByUserId(resetPassDetails.userId);
+            if (accountConfirmation && !accountConfirmation.status) {
+                throw new AppError(ResponseMessage.ACCOUNT_CONFIRMATION_REQUIRED, StatusCodes.UNAUTHORIZED);
+            }
+
+            // * check expiry of the url
+            const storedExpiry = resetPassDetails.expiresAt;
+            const currentTimestamp = dayjs().valueOf();
+            if (currentTimestamp > storedExpiry) {
+                throw new AppError(ResponseMessage.EXPIRED_URL, StatusCodes.UNAUTHORIZED);
+            }
+
+            // * Has new password
+            const hashedPassword = await Quicker.hashPassword(password);
+
+            // * Update User with new password
+            await this.userRepository.update(resetPassDetails.userId, { password: hashedPassword });
+            const updatedResetPass: Partial<IResetPasswordAttributes> = {
+                expiresAt: 0,
+                token: '',
+                used: true,
+                lastResetAt: dayjs().utc().toDate(),
+            };
+            await this.resetPasswordService.updateResetPassword(resetPassDetails.id!, updatedResetPass);
+
+            // * Send Email
+            const to = [resetPassDetails.user!.email];
+            const subject = `Reset Account Password Success`;
+            const text = `Hey ${resetPassDetails.user?.name}, Your account password reset has been successfully performed.`;
 
             this.mailService.sendEmail(to, subject, text);
         } catch (error) {

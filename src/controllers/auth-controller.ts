@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpError, HttpResponse } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
-import { IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody } from '../types';
+import { IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
 import { EApplicationEnvironment, ResponseMessage } from '../utils/constants';
 import { UserService } from '../services';
 import { ServerConfig } from '../config';
@@ -31,6 +31,13 @@ interface IProfileRequest extends Request {
 
 interface IForgotPasswordRequest extends Request {
     body: IForgotPasswordRequestBody;
+}
+
+interface IResetPasswordRequest extends Request {
+    params: {
+        token: string;
+    };
+    body: IResetPasswordRequestBody;
 }
 
 export class AuthController {
@@ -180,7 +187,23 @@ export class AuthController {
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
         } catch (error) {
             // Handle errors by passing them to the next middleware.
-            HttpError(next, error, req, StatusCodes.INTERNAL_SERVER_ERROR);
+            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static async resetPassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            // * parse the request body
+            const { body, params } = req as IResetPasswordRequest;
+            const { newPassword } = body;
+            const { token } = params;
+            //
+            await AuthController.userService.resetPassword(token, newPassword);
+
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+        } catch (error) {
+            // Handle errors by passing them to the next middleware.
+            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

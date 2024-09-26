@@ -10,9 +10,11 @@ import {
     IRefreshTokenAttributes,
     IUserWithAssociations,
     IForgotPasswordRequestBody,
-    IUserWithAccountConfirmation,
+    IUserWithAccountConfirmationAndResetPassword,
     WithAssociations,
     IResetPasswordAttributes,
+    IResetPasswordRequestBody,
+    TResetPasswordWithUser,
 } from './user-types';
 
 export {
@@ -29,7 +31,9 @@ export {
     IRefreshTokenAttributes,
     IUserWithAssociations,
     IForgotPasswordRequestBody,
-    IUserWithAccountConfirmation,
+    IUserWithAccountConfirmationAndResetPassword,
     WithAssociations,
     IResetPasswordAttributes,
+    IResetPasswordRequestBody,
+    TResetPasswordWithUser,
 };

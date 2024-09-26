@@ -1,5 +1,6 @@
 import { Account_Confirmation, Phone_Number, Role, User } from '../database';
-import { IUserWithAccountConfirmation, IUserWithAssociations } from '../types';
+import { Reset_Password } from '../database/models';
+import { IUserWithAccountConfirmationAndResetPassword, IUserWithAssociations } from '../types';
 import CrudRepository from './crud-repository';
 
 class UserRepository extends CrudRepository<User> {
@@ -34,12 +35,15 @@ class UserRepository extends CrudRepository<User> {
         return userWithAssociations;
     }
 
-    public async getUserWithAccountConfirmationByEmail(email: string) {
-        const userWithAccountConfirmation: IUserWithAccountConfirmation | null = await User.findOne({
+    public async getUserWithAccountConfirmationAndResetPasswordByEmail(email: string) {
+        const userWithAccountConfirmationAndResetPassword: IUserWithAccountConfirmationAndResetPassword | null = await User.findOne({
             where: { email: email },
-            include: [{ model: Account_Confirmation, required: true, as: 'accountConfirmation' }],
+            include: [
+                { model: Account_Confirmation, required: true, as: 'accountConfirmation' },
+                { model: Reset_Password, as: 'resetPassword' },
+            ],
         });
-        return userWithAccountConfirmation;
+        return userWithAccountConfirmationAndResetPassword;
     }
 }
 
