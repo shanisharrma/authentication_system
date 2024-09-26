@@ -8,10 +8,10 @@ export default {
     ACCOUNT_ALREADY_CONFIRMED: `Account already confirmed.`,
     INCORRECT_EMAIL_OR_PASSWORD: `Incorrect email address or password.`,
     AUTHORIZATION_TOKEN_MISSING: `Authorization token doesn't exists`,
+    AUTHORIZATION_TOKEN_EXPIRED: `Authorization token expired.`,
+    INVALID_AUTHORIZATION_TOKEN: `Invalid authorization token.`,
     UNAUTHORIZED: `You are not authorized to perform this action.`,
-    INVALID_TOKEN: `Invalid Token.`,
-    TOKEN_EXPIRED: `Token Expired.`,
-    TOKEN_MISSING: `Token missing.`,
+    SESSION_EXPIRED: `Session expired.`,
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`,
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`,

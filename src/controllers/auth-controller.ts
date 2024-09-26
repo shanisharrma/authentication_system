@@ -68,7 +68,14 @@ export class AuthController {
 
             const { accessToken, refreshToken } = response;
 
-            res.cookie('refreshToken', refreshToken, {
+            res.cookie('accessToken', accessToken, {
+                path: '/api/v1',
+                domain: DOMAIN,
+                sameSite: 'strict',
+                maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
+                httpOnly: true,
+                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+            }).cookie('refreshToken', refreshToken, {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
@@ -110,7 +117,14 @@ export class AuthController {
             // * Clear cookies
             // ---> Extracting the base url
             const DOMAIN = Quicker.getDomainFromUrl(ServerConfig.SERVER_URL as string);
-            res.clearCookie('refreshToken', {
+            res.clearCookie('accessToken', {
+                path: '/api/v1',
+                domain: DOMAIN,
+                sameSite: 'strict',
+                maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
+                httpOnly: true,
+                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+            }).clearCookie('refreshToken', {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
@@ -120,6 +134,32 @@ export class AuthController {
             });
 
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS);
+        } catch (error) {
+            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static async refreshToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            // * token from cookies
+            const { cookies } = req;
+            const { refreshToken } = cookies as { refreshToken: string };
+
+            const accessToken = await AuthController.userService.refreshToken(refreshToken);
+
+            // * Set Tokens to Response Cookie
+            // ---> Extracting the base url
+
+            const DOMAIN = Quicker.getDomainFromUrl(ServerConfig.SERVER_URL as string);
+            res.cookie('accessToken', accessToken, {
+                path: '/api/v1',
+                domain: DOMAIN,
+                sameSite: 'strict',
+                maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
+                httpOnly: true,
+                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+            });
+            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.SUCCESS, accessToken);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }

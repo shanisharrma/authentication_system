@@ -9,6 +9,10 @@ class RefreshTokenRepository extends CrudRepository<Refresh_Token> {
     public async destroyByRefreshToken(token: string) {
         return await Refresh_Token.destroy({ where: { token: token } });
     }
+
+    public async findByRefreshToken(token: string) {
+        return await Refresh_Token.findOne({ where: { token: token } });
+    }
 }
 
 export default RefreshTokenRepository;

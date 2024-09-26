@@ -14,16 +14,16 @@ class AuthMiddleware {
 
     public static async checkAuth(req: Request, _res: Response, next: NextFunction) {
         try {
-            // destructure the req body to get authorization
-            const { authorization } = req.headers;
-            // Check Authorization exist or not
-            if (!authorization) {
+            // destructure the req body to get access token from cookies
+            const { cookies } = req;
+            const { accessToken } = cookies;
+            // Check access token exist or not
+            if (!accessToken) {
                 throw new AppError(ResponseMessage.AUTHORIZATION_TOKEN_MISSING, StatusCodes.BAD_REQUEST);
             }
-            // If exist --> get the token from authorization string
-            const token = authorization.split(' ')[1];
+
             // Authenticate the token
-            const response = await AuthMiddleware.userService.isAuthenticated(token);
+            const response = await AuthMiddleware.userService.isAuthenticated(accessToken);
             // Check authenticated or not ---> if yes --> call next()
             if (response) {
                 (req as IAuthenticatedRequest).id = response;

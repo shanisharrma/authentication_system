@@ -20,4 +20,7 @@ router.route('/profile').get(AuthMiddleware.checkAuth, AuthController.profile);
 // Logout : PUT /api/v1/logout
 router.route('/logout').put(AuthMiddleware.checkAuth, AuthController.logout);
 
+// Refresh Token : POST /api/v1/refresh-token
+router.route('/refresh-token').post(AuthController.refreshToken);
+
 export default router;
