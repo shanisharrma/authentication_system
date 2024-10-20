@@ -1,7 +1,7 @@
 import RateLimit from './rate-limit';
-import ValidateRequestMiddleware from './validate-request';
+import ValidationMiddleware from './validation-middleware';
 import AuthMiddleware from './auth-middleware';
 import ErrorMiddleware from './error-middleware';
 
 // Exporting all the middlewares
-export { RateLimit, ValidateRequestMiddleware, AuthMiddleware, ErrorMiddleware };
+export { RateLimit, ValidationMiddleware, AuthMiddleware, ErrorMiddleware };

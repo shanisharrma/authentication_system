@@ -4,8 +4,8 @@ import { HttpError } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
 
 // Middleware for validating incoming requests against a Joi schema.
-export default {
-    validateRequest: (schema: Joi.Schema) => {
+export default class ValidationMiddleware {
+    public static validateRequest(schema: Joi.Schema) {
         return (req: Request, _: Response, next: NextFunction) => {
             // Validate the request body using the provided schema.
             const { error, value } = schema.validate(req.body);
@@ -19,6 +19,5 @@ export default {
             req.body = value; // Assign the validated value back to req.body.
             next(); // Proceed to the next middleware.
         };
-    },
-};
-
+    }
+}
