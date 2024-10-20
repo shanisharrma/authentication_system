@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import apiRoutes from './routes'; // Importing API routes
-import { GlobalErrorHandler, NotFoundErrorHandler } from './middlewares'; // Importing error handling middlewares
+import { ErrorMiddleware } from './middlewares'; // Importing error handling middlewares
 import helmet from 'helmet'; // Security middleware for setting HTTP headers
 import cors from 'cors'; // Middleware for enabling CORS
 import cookieParser from 'cookie-parser';
@@ -24,10 +24,13 @@ app.use(express.static(path.join(__dirname, '../', 'public'))); // Serve static 
 // Routes
 app.use('/api', apiRoutes); // Use the imported routes under the '/api' endpoint
 
+// intercept the error can't reach the controller
+app.use(ErrorMiddleware.interceptError);
+
 // 404 (Not Found) Error Handler
-app.use(NotFoundErrorHandler); // Handle 404 errors
+app.use(ErrorMiddleware.notFound); // Handle 404 errors
 
 // Global Error Handler Middleware
-app.use(GlobalErrorHandler); // Handle all other errors
+app.use(ErrorMiddleware.global); // Handle all other errors
 
 export default app; // Export the app instance for use in other modules

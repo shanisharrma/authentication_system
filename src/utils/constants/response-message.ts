@@ -35,6 +35,8 @@ export default {
     SIMILAR_CURRENT_PASSWORD_AND_NEW_PASSWORD: `New password cannot be the same as the old password. Please choose a different password.`, //400
     TOO_MANY_REQUESTS: `Too many request! Please try again later.`, //429
     NOT_AUTHORIZED: `You are not authorized to access.`, //403
+    FILE_TOO_LARGE: `File is too large`, //413
+    TOO_MANY_FILES: `Too many files uploaded`, //400
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`, //404
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`, //400
