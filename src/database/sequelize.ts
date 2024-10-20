@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { ServerConfig } from '../config';
-import { EApplicationEnvironment } from '../utils/constants';
+import { Enums } from '../utils/constants';
 
 // Creating a new Sequelize connection instance for MySQL.
 const connection: Sequelize = new Sequelize(
@@ -12,7 +12,7 @@ const connection: Sequelize = new Sequelize(
         dialect: 'mysql', // Database dialect.
         // Disable logging in production; log to console in other environments.
         // eslint-disable-next-line no-console
-        logging: ServerConfig.ENV === EApplicationEnvironment.PRODUCTION ? false : console.log,
+        logging: ServerConfig.ENV === Enums.EApplicationEnvironment.PRODUCTION ? false : console.log,
     },
 );
 

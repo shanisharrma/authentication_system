@@ -34,6 +34,7 @@ export default {
     EXPIRED_RESET_PASSWORD_URL: `Reset password link has expired. Please request a new one.`, //400
     SIMILAR_CURRENT_PASSWORD_AND_NEW_PASSWORD: `New password cannot be the same as the old password. Please choose a different password.`, //400
     TOO_MANY_REQUESTS: `Too many request! Please try again later.`, //429
+    NOT_AUTHORIZED: `You are not authorized to access.`, //403
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`, //404
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`, //400

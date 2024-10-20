@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpError, HttpResponse } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
 import { IChangePasswordRequestBody, IForgotPasswordRequestBody, ILoginRequestBody, IRegisterRequestBody, IResetPasswordRequestBody } from '../types';
-import { EApplicationEnvironment, ResponseMessage } from '../utils/constants';
+import { Enums, ResponseMessage } from '../utils/constants';
 import { UserService } from '../services';
 import { ServerConfig } from '../config';
 import { Quicker } from '../utils/helpers';
@@ -91,14 +91,14 @@ export class AuthController {
                 sameSite: 'strict',
                 maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
                 httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+                secure: !(ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT),
             }).cookie('refreshToken', refreshToken, {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
                 maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
                 httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+                secure: !(ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT),
             });
 
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.LOGIN_SUCCESS, accessToken);
@@ -140,14 +140,14 @@ export class AuthController {
                 sameSite: 'strict',
                 maxAge: 1000 * ServerConfig.ACCESS_TOKEN.EXPIRY,
                 httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+                secure: !(ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT),
             }).clearCookie('refreshToken', {
                 path: '/api/v1',
                 domain: DOMAIN,
                 sameSite: 'strict',
                 maxAge: 1000 * ServerConfig.REFRESH_TOKEN.EXPIRY,
                 httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+                secure: !(ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT),
             });
 
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.LOGIN_SUCCESS);
@@ -174,7 +174,7 @@ export class AuthController {
                 sameSite: 'strict',
                 maxAge: 1000 * ServerConfig.ACCESS_TOKEN.EXPIRY,
                 httpOnly: true,
-                secure: !(ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT),
+                secure: !(ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT),
             });
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.TOKEN_REFRESH_SUCCESS, accessToken);
         } catch (error) {

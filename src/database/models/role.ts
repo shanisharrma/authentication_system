@@ -2,10 +2,10 @@
 
 import { DataTypes, Model, Optional } from 'sequelize';
 import connection from '../sequelize';
-import { EUserRole } from '../../utils/constants/Enums';
+import { Enums } from '../../utils/constants';
 import { IRoleAttributes, IUserAttributes } from '../../types';
 
-const { ADMIN, MODERATOR, USER } = EUserRole;
+const { ADMIN, MODERATOR, USER } = Enums.EUserRole;
 
 type TRoleCreationAttributes = Optional<IRoleAttributes, 'id'>;
 

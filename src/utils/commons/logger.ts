@@ -2,7 +2,7 @@ import { createLogger, format, transports } from 'winston'; // Importing winston
 import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports'; // Transport interfaces for console and file logging.
 import util from 'util';
 import { ServerConfig } from '../../config'; // Importing server configuration.
-import { EApplicationEnvironment, ELogLevel } from '../constants'; // Importing application constants.
+import { Enums } from '../constants'; // Importing application constants.
 import path from 'path'; // For handling file paths.
 import { red, blue, green, yellow, magenta } from 'colorette'; // For colorful console output.
 import * as sourceMapSupport from 'source-map-support'; // For enhanced stack traces.
@@ -14,11 +14,11 @@ sourceMapSupport.install();
 // Function to colorize log levels
 const colorizeLevel = (level: string) => {
     switch (level) {
-        case ELogLevel.INFO:
+        case Enums.ELogLevel.INFO:
             return blue(level);
-        case ELogLevel.ERROR:
+        case Enums.ELogLevel.ERROR:
             return red(level);
-        case ELogLevel.WARN:
+        case Enums.ELogLevel.WARN:
             return yellow(level);
         default:
             return level; // Return level as is if no match.
@@ -39,13 +39,13 @@ const consoleLogFormat = format.printf((info) => {
     });
 
     // Custom log structure for console output
-    const customLog = `${customLevel} [${customTimeStamp}] ${customMessage}\n${magenta(ELogLevel.META)} ${customMeta}`;
+    const customLog = `${customLevel} [${customTimeStamp}] ${customMessage}\n${magenta(Enums.ELogLevel.META)} ${customMeta}`;
     return customLog;
 });
 
 // Transport for console logging (only in development)
 const consoleTransport = (): Array<ConsoleTransportInstance> => {
-    if (ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT) {
+    if (ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT) {
         return [
             new transports.Console({
                 level: 'info',

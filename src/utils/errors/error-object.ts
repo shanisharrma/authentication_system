@@ -1,6 +1,6 @@
 import { Request } from 'express'; // Importing Express Request type for type safety.
 import { THttpError } from '../../types'; // Importing custom type for HTTP errors.
-import { EApplicationEnvironment, EApplicationEvents, ResponseMessage } from '../constants'; // Importing constants for environment and responses.
+import { Enums, ResponseMessage } from '../constants'; // Importing constants for environment and responses.
 import { ServerConfig } from '../../config'; // Importing server configuration settings.
 import { Logger } from '../commons'; // Importing logger for logging errors.
 
@@ -20,10 +20,10 @@ export default (err: Error | unknown, req: Request, errorStatusCode: number = 50
     };
 
     // Log the error response using the logger
-    Logger.error(EApplicationEvents.CONTROLLER_ERROR_RESPONSE, { meta: errorObj });
+    Logger.error(Enums.EApplicationEvents.CONTROLLER_ERROR_RESPONSE, { meta: errorObj });
 
     // Check if the environment is production
-    if (ServerConfig.ENV === EApplicationEnvironment.PRODUCTION) {
+    if (ServerConfig.ENV === Enums.EApplicationEnvironment.PRODUCTION) {
         // Remove sensitive information from the error response in production
         delete errorObj.request.ip; // Avoid exposing the client's IP address.
         delete errorObj.trace; // Avoid exposing stack traces in production.

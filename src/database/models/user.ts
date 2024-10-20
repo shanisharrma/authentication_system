@@ -1,6 +1,13 @@
 'use strict';
 
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, DataTypes, Model, Optional } from 'sequelize';
+import {
+    BelongsToManyAddAssociationMixin,
+    BelongsToManyAddAssociationsMixin,
+    BelongsToManyHasAssociationMixin,
+    DataTypes,
+    Model,
+    Optional,
+} from 'sequelize';
 import connection from '../sequelize';
 import Role from './role';
 import { Quicker } from '../../utils/helpers';
@@ -35,6 +42,7 @@ class User extends Model<IUserAttributes, TUserCreationAttributes> implements IU
 
     declare addRole: BelongsToManyAddAssociationMixin<Role, Role['id']>;
     declare addRoles: BelongsToManyAddAssociationsMixin<Role, Role['id']>;
+    declare hasRole: BelongsToManyHasAssociationMixin<Role, Role['id']>;
 }
 
 User.init(

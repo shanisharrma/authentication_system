@@ -1,5 +1,5 @@
 import AppError from '../utils/errors/app-error';
-import { EApplicationEvents, EUserRole } from '../utils/constants/Enums';
+import { Enums } from '../utils/constants';
 import { ILoginRequestBody, IRefreshTokenAttributes, IRegisterRequestBody, IResetPasswordAttributes, IUserAttributes } from '../types';
 import { Quicker } from '../utils/helpers';
 import { ResponseMessage } from '../utils/constants';
@@ -77,7 +77,7 @@ class UserService {
             });
 
             // * Check if the role exists --> if yes, assign role to user --> if no, throw error
-            const role = await this.roleRepository.getRoleByName(EUserRole.USER);
+            const role = await this.roleRepository.findByRole(Enums.EUserRole.USER);
             if (role) {
                 user.addRole(role);
             } else {
@@ -107,7 +107,7 @@ class UserService {
 
             // * Send Email
             this.mailService.sendEmail(to, subject, text).catch((error) => {
-                Logger.error(EApplicationEvents.EMAIL_SERVICE, { meta: error });
+                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE, { meta: error });
             });
 
             // sending user details
@@ -150,7 +150,7 @@ class UserService {
 
             // // * Send Account Confirmation Email
             this.mailService.sendEmail(to, subject, text).catch((error) => {
-                Logger.error(EApplicationEvents.EMAIL_SERVICE, { meta: error });
+                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE, { meta: error });
             });
 
             return accountConfirmed;
@@ -238,6 +238,45 @@ class UserService {
             }
 
             // * Return user id
+            return user.id;
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            if (error instanceof JsonWebTokenError) {
+                if (error instanceof TokenExpiredError) {
+                    throw new AppError(ResponseMessage.AUTHORIZATION_TOKEN_EXPIRED, StatusCodes.UNAUTHORIZED);
+                }
+                throw new AppError(ResponseMessage.INVALID_AUTHORIZATION_TOKEN, StatusCodes.UNAUTHORIZED);
+            }
+            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async isAuthorized(token: string, userRole: string) {
+        try {
+            if (!token) {
+                throw new AppError(ResponseMessage.AUTHORIZATION_TOKEN_MISSING, StatusCodes.UNAUTHORIZED);
+            }
+
+            const { userId } = Quicker.verifyToken(token, ServerConfig.ACCESS_TOKEN.SECRET as string) as IDecryptedJWT;
+
+            // check if user exists with userId
+            const user = await this.userRepository.getOneById(userId);
+            if (!user) {
+                throw new AppError(ResponseMessage.AUTHORIZATION_REQUIRED, StatusCodes.UNAUTHORIZED);
+            }
+
+            // get student role from db
+            const studentRole = await this.roleRepository.findByRole(userRole);
+            if (!studentRole) {
+                throw new AppError(ResponseMessage.NOT_FOUND(`User with role ${userRole}`), StatusCodes.NOT_FOUND);
+            }
+
+            // check if role is student of user
+            const hasRole = await user.hasRole(studentRole);
+            if (!hasRole) {
+                throw new AppError(ResponseMessage.NOT_AUTHORIZED, StatusCodes.FORBIDDEN);
+            }
+
             return user.id;
         } catch (error) {
             if (error instanceof AppError) throw error;

@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { rateLimiterMySQL, ServerConfig } from '../config';
-import { EApplicationEnvironment, ResponseMessage } from '../utils/constants';
+import { Enums, ResponseMessage } from '../utils/constants';
 import { HttpError } from '../utils/commons';
 import { StatusCodes } from 'http-status-codes';
 
 // Middleware for rate limiting API requests.
 export default (req: Request, _: Response, next: NextFunction) => {
     // Skip rate limiting in the development environment.
-    if (ServerConfig.ENV === EApplicationEnvironment.DEVELOPMENT) {
+    if (ServerConfig.ENV === Enums.EApplicationEnvironment.DEVELOPMENT) {
         return next();
     }
 

@@ -32,6 +32,14 @@ class CrudRepository<T extends Model> {
         return await this.model.findOne(options);
     }
 
+    public async getOneById(id: number): Promise<T> {
+        const response = await this.model.findByPk(id);
+        if (!response) {
+            throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);
+        }
+        return response;
+    }
+
     public async destroy(id: number): Promise<boolean> {
         const response = await this.model.findByPk(id);
         if (!response) throw new AppError(ResponseMessage.NOT_FOUND('Resource'), StatusCodes.NOT_FOUND);

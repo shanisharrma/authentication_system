@@ -1,9 +1,9 @@
 'use strict';
 
 import { DataTypes, QueryInterface } from 'sequelize';
-import { EUserRole } from '../../utils/constants/Enums';
+import { Enums } from '../../utils/constants';
 
-const { ADMIN, MODERATOR, USER } = EUserRole;
+const { ADMIN, MODERATOR, USER } = Enums.EUserRole;
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
