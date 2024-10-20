@@ -101,13 +101,13 @@ class UserService {
 
             // * Create Email Body and Subject
             const confirmationUrl = `${ServerConfig.FRONTEND_URL}/confirmation/${confirmationToken}?code=${confirmationCode}`;
-            const to = [user.email];
+            const to = user.email;
             const subject = `Confirm Your Account`;
             const text = `Hey ${user.name}, Please confirm your account by clicking on the link given below\n\n${confirmationUrl}`;
 
             // * Send Email
-            this.mailService.sendEmail(to, subject, text).catch((error) => {
-                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE, { meta: error });
+            this.mailService.sendEmailByNodeMailer(to, subject, text).catch((error) => {
+                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE_ERROR, { meta: error });
             });
 
             // sending user details
@@ -144,13 +144,13 @@ class UserService {
             const accountConfirmed = await this.accountConfirmationService.updateAccountConfirmation(accountConfirmation.id, { status, timestamp });
 
             // // * Create Email Body and Subject
-            const to = [accountConfirmation.user.email];
+            const to = accountConfirmation.user.email;
             const subject = `Account Confirmed`;
             const text = `Your account has been confirmed.`;
 
             // // * Send Account Confirmation Email
-            this.mailService.sendEmail(to, subject, text).catch((error) => {
-                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE, { meta: error });
+            this.mailService.sendEmailByNodeMailer(to, subject, text).catch((error) => {
+                Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE_ERROR, { meta: error });
             });
 
             return accountConfirmed;
@@ -380,11 +380,11 @@ class UserService {
 
             // * Send email regarding forgot password
             const resetPasswordURL = `${ServerConfig.FRONTEND_URL}/reset-password/${token}`;
-            const to = [user.email];
+            const to = user.email;
             const subject = `Account Password Reset Requested`;
             const text = `Hey ${user.name}, Please reset your account password by clicking on the line below.\n\n${resetPasswordURL}\n\nLink will expire within 15 minutes.`;
 
-            this.mailService.sendEmail(to, subject, text);
+            this.mailService.sendEmailByNodeMailer(to, subject, text);
         } catch (error) {
             if (error instanceof AppError) throw error;
 
@@ -428,11 +428,11 @@ class UserService {
             await this.resetPasswordService.updateResetPassword(resetPassDetails.id!, updatedResetPass);
 
             // * Send Email
-            const to = [resetPassDetails.user!.email];
+            const to = resetPassDetails.user!.email;
             const subject = `Account Password Reset`;
             const text = `Hey ${resetPassDetails.user?.name}, Your account password reset has been successfully performed.`;
 
-            this.mailService.sendEmail(to, subject, text);
+            this.mailService.sendEmailByNodeMailer(to, subject, text);
         } catch (error) {
             if (error instanceof AppError) throw error;
 
@@ -466,12 +466,12 @@ class UserService {
             await this.userRepository.update(userWithPassword.id, { password: hashedPassword });
 
             // * Prepare mail
-            const to = [userWithPassword.email];
+            const to = userWithPassword.email;
             const subject = `Password Changed`;
             const text = `Hey ${userWithPassword.name}, Your account password changed successfully.`;
 
             // * Send Email
-            this.mailService.sendEmail(to, subject, text);
+            this.mailService.sendEmailByNodeMailer(to, subject, text);
         } catch (error) {
             if (error instanceof AppError) throw error;
 

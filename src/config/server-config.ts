@@ -19,7 +19,9 @@ export default {
     FRONTEND_URL: process.env.FRONTEND_URL,
 
     // Email Service
-    EMAIL_SERVICE_API_KEY: process.env.EMAIL_SERVICE_API_KEY,
+    RESEND: {
+        EMAIL_SERVICE_API_KEY: process.env.EMAIL_SERVICE_API_KEY,
+    },
 
     // Rate Limiting Configuration
     RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX), // Max requests in a time window.
@@ -39,5 +41,14 @@ export default {
     REFRESH_TOKEN: {
         SECRET: process.env.REFRESH_TOKEN_SECRET,
         EXPIRY: 3600 * 24 * 14,
+    },
+
+    // Nodemailer Service
+    SMTP: {
+        MAIL_SERVICE: process.env.MAIL_SERVICE,
+        MAIL_HOST: process.env.SMTP_MAIL_HOST,
+        MAIL_USERNAME: process.env.SMTP_MAIL_USERNAME,
+        MAIL_PASSWORD: process.env.SMTP_MAIL_PASSWORD,
+        MAIL_PORT: process.env.MAIL_PORT,
     },
 };
