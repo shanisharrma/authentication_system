@@ -1,5 +1,6 @@
 import Account_Confirmation from './account_confirmation';
 import Phone_Number from './phone_number';
+import Profile from './profile';
 import Refresh_Token from './refresh_token';
 import Reset_Password from './reset_password';
 import Role from './role';
@@ -67,4 +68,18 @@ Reset_Password.belongsTo(User, {
     as: 'user',
 });
 
-export { Role, User, Phone_Number, Account_Confirmation, Refresh_Token, Reset_Password };
+// One-to-One Associations between User and Profile
+User.hasOne(Profile, {
+    foreignKey: 'userId',
+    as: 'profileDetails',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+Profile.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+
+export { Role, User, Phone_Number, Account_Confirmation, Refresh_Token, Reset_Password, Profile };

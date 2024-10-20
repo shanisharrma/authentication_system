@@ -1,4 +1,4 @@
-import { THttpError, THttpResponse, ILogAttributes } from './types';
+import { THttpError, THttpResponse, ILogAttributes, TWithAssociations } from './types';
 import {
     IUserAttributes,
     IRegisterRequestBody,
@@ -8,14 +8,19 @@ import {
     IAccountConfirmationAttributes,
     ILoginRequestBody,
     IRefreshTokenAttributes,
-    IUserWithAssociations,
     IForgotPasswordRequestBody,
-    IUserWithAccountConfirmationAndResetPassword,
-    WithAssociations,
     IResetPasswordAttributes,
     IResetPasswordRequestBody,
     TResetPasswordWithUser,
     IChangePasswordRequestBody,
+    IProfileAttributes,
+    IProfileRequestBody,
+    IProfileUpdateParams,
+    TAccountConfirmationWithUser,
+    TUserWithAssociations,
+    TProfileWithUserAssociations,
+    TUserWithAccountConfirmationAndResetPassword,
+    TUserWithProfileAssociations,
 } from './user-types';
 
 export {
@@ -30,12 +35,18 @@ export {
     IAccountConfirmationAttributes,
     ILoginRequestBody,
     IRefreshTokenAttributes,
-    IUserWithAssociations,
     IForgotPasswordRequestBody,
-    IUserWithAccountConfirmationAndResetPassword,
-    WithAssociations,
     IResetPasswordAttributes,
     IResetPasswordRequestBody,
     TResetPasswordWithUser,
     IChangePasswordRequestBody,
+    TWithAssociations,
+    IProfileAttributes,
+    IProfileRequestBody,
+    IProfileUpdateParams,
+    TAccountConfirmationWithUser,
+    TUserWithAssociations,
+    TProfileWithUserAssociations,
+    TUserWithAccountConfirmationAndResetPassword,
+    TUserWithProfileAssociations,
 };

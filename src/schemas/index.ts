@@ -1,3 +1,3 @@
-import { registerSchema, loginSchema } from './auth-schema';
+import { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema, forgotPasswordSchema, resetPasswordSchema } from './auth-schema';
 
-export { registerSchema, loginSchema };
+export default { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema, forgotPasswordSchema, resetPasswordSchema };

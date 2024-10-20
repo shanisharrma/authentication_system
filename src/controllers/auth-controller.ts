@@ -25,10 +25,6 @@ interface ILoginRequest extends Request {
     body: ILoginRequestBody;
 }
 
-interface IProfileRequest extends Request {
-    id: number;
-}
-
 interface IForgotPasswordRequest extends Request {
     body: IForgotPasswordRequestBody;
 }
@@ -45,7 +41,7 @@ interface IChangePasswordRequest extends Request {
     body: IChangePasswordRequestBody;
 }
 
-export class AuthController {
+class AuthController {
     private static userService: UserService = new UserService();
 
     public static async register(req: Request, res: Response, next: NextFunction) {
@@ -102,19 +98,6 @@ export class AuthController {
             });
 
             HttpResponse(req, res, StatusCodes.OK, ResponseMessage.LOGIN_SUCCESS, accessToken);
-        } catch (error) {
-            HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public static async profile(req: Request, res: Response, next: NextFunction) {
-        try {
-            // extract id from IProfileRequest
-            const { id } = req as IProfileRequest;
-            // get user with id
-            const user = await AuthController.userService.profile(id);
-
-            HttpResponse(req, res, StatusCodes.OK, ResponseMessage.PROFILE_SUCCESS, user);
         } catch (error) {
             HttpError(next, error, req, error instanceof AppError ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -228,3 +211,5 @@ export class AuthController {
         }
     }
 }
+
+export default AuthController;

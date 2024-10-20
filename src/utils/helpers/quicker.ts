@@ -87,4 +87,11 @@ export class Quicker {
     public static generateResetPasswordExpiry(minute: number) {
         return dayjs().valueOf() + minute * 60 * 1000;
     }
+
+    public static prepareFileName(str: string) {
+        return str
+            .replace(/[^a-zA-Z0-9]/g, ' ')
+            .split(' ')
+            .join('_');
+    }
 }

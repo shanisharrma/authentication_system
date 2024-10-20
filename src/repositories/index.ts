@@ -4,5 +4,14 @@ import RoleRepository from './role-repository';
 import AccountConfirmationRepository from './account-confirmation-repository';
 import RefreshTokenRepository from './refresh-token-repository';
 import ResetPasswordRepository from './reset-password-repository';
+import ProfileRepository from './profile-repository';
 
-export { PhoneNumberRepository, UserRepository, RoleRepository, AccountConfirmationRepository, RefreshTokenRepository, ResetPasswordRepository };
+export {
+    PhoneNumberRepository,
+    UserRepository,
+    RoleRepository,
+    AccountConfirmationRepository,
+    RefreshTokenRepository,
+    ResetPasswordRepository,
+    ProfileRepository,
+};

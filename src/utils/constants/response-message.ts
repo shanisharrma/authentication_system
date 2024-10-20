@@ -37,7 +37,9 @@ export default {
     NOT_AUTHORIZED: `You are not authorized to access.`, //403
     FILE_TOO_LARGE: `File is too large`, //413
     TOO_MANY_FILES: `Too many files uploaded`, //400
+    PROFILE_ALREADY_CREATED: `User profile already created.`, //400
 
     NOT_FOUND: (entity: string) => `${entity} Not Found!`, //404
     ALREADY_EXIST: (entity: string, identifier: string) => `${entity} already exists with this ${identifier}`, //400
+    UPLOAD_FAILED: (entity: string) => `Failed to upload ${entity} file. Please try again.`, //500
 };

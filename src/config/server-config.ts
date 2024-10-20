@@ -51,4 +51,10 @@ export default {
         MAIL_PASSWORD: process.env.SMTP_MAIL_PASSWORD,
         MAIL_PORT: process.env.MAIL_PORT,
     },
+    // Cloudinary Configuration
+    CLOUDINARY: {
+        CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+        API_KEY: process.env.CLOUDINARY_API_KEY,
+        API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    },
 };

@@ -36,3 +36,5 @@ export interface ILogAttributes {
     deletedAt?: Date;
     updatedAt?: Date;
 }
+
+export type TWithAssociations<T, Associations> = T & Partial<Associations>;

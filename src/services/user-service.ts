@@ -15,6 +15,7 @@ import utc from 'dayjs/plugin/utc';
 import RefreshTokenService from './refresh-token-service';
 import { JsonWebTokenError, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import ResetPasswordService from './reset-password-service';
+import ProfileService from './profile-service';
 
 dayjs.extend(utc);
 
@@ -30,6 +31,7 @@ class UserService {
     private mailService: MailService;
     private refreshTokenService: RefreshTokenService;
     private resetPasswordService: ResetPasswordService;
+    private profileService: ProfileService;
 
     constructor() {
         this.userRepository = new UserRepository();
@@ -39,6 +41,7 @@ class UserService {
         this.mailService = new MailService();
         this.refreshTokenService = new RefreshTokenService();
         this.resetPasswordService = new ResetPasswordService();
+        this.profileService = new ProfileService();
     }
 
     public async register(data: IRegisterRequestBody) {
@@ -84,6 +87,15 @@ class UserService {
                 throw new AppError(ResponseMessage.NOT_FOUND('Role'), StatusCodes.NOT_FOUND);
             }
 
+            // * create Profile for user
+            const profileDetails = await this.profileService.create({
+                about: null,
+                dateOfBirth: null,
+                gender: null,
+                imageUrl: null,
+                userId: user.id,
+            });
+
             // * Creating Phone Number entry
             const newPhoneNumber = await this.phoneNumberService.createNumber({ countryCode, isoCode, internationalNumber, userId: user.id });
 
@@ -110,11 +122,11 @@ class UserService {
                 Logger.error(Enums.EApplicationEvents.EMAIL_SERVICE_ERROR, { meta: error });
             });
 
-            // sending user details
+            // * return the complete user
             const userDetails: IUserAttributes = {
                 ...user,
-                roles: [role],
                 accountConfirmation,
+                profileDetails,
                 phoneNumber: newPhoneNumber,
             };
 
@@ -286,18 +298,6 @@ class UserService {
                 }
                 throw new AppError(ResponseMessage.INVALID_AUTHORIZATION_TOKEN, StatusCodes.UNAUTHORIZED);
             }
-            throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public async profile(id: number) {
-        try {
-            // get user of id with all the associations
-            const user = await this.userRepository.getUserWithAssociations(id);
-            return user;
-        } catch (error) {
-            if (error instanceof AppError) throw error;
-
             throw new AppError(ResponseMessage.SOMETHING_WENT_WRONG, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }

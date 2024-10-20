@@ -1,20 +1,4 @@
-export type WithAssociations<T, Associations> = T & Partial<Associations>;
-
-export type IUserWithAssociations = WithAssociations<
-    IUserAttributes,
-    {
-        roles: IRoleAttributes[];
-        phoneNumber: IPhoneNumberAttributes;
-        accountConfirmation: IAccountConfirmationAttributes;
-    }
->;
-
-export type IUserWithAccountConfirmationAndResetPassword = WithAssociations<
-    IUserAttributes,
-    { accountConfirmation: IAccountConfirmationAttributes; resetPassword: IResetPasswordAttributes }
->;
-
-export type TResetPasswordWithUser = WithAssociations<IResetPasswordAttributes, { user: IUserAttributes }>;
+import { TWithAssociations } from './types';
 
 export interface IUserAttributes {
     id?: number;
@@ -29,6 +13,7 @@ export interface IUserAttributes {
     deletedAt?: Date;
     roles?: IRoleAttributes[];
     phoneNumber?: IPhoneNumberAttributes;
+    profileDetails?: IProfileAttributes;
     accountConfirmation?: IAccountConfirmationAttributes;
     refreshToken?: IRefreshTokenAttributes;
     resetPassword?: IResetPasswordAttributes;
@@ -103,6 +88,19 @@ export interface IResetPasswordAttributes {
     user?: IUserAttributes;
 }
 
+export interface IProfileAttributes {
+    id?: number;
+    userId: number;
+    gender: string | null;
+    dateOfBirth: string | null;
+    about: string | null;
+    imageUrl: string | null;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
+    user?: IUserAttributes;
+}
+
 export interface IRegisterRequestBody {
     name: string;
     email: string;
@@ -129,3 +127,43 @@ export interface IChangePasswordRequestBody {
     newPassword: string;
     confirmNewPassword: string;
 }
+
+export interface IProfileRequestBody {
+    about: string;
+    dateOfBirth: string;
+    gender: string;
+}
+
+export interface IProfileUpdateParams extends IProfileAttributes {
+    file: Express.Multer.File | undefined;
+}
+
+export type TAccountConfirmationWithUser = TWithAssociations<IAccountConfirmationAttributes, { user: IUserAttributes }>;
+
+export type TUserWithAssociations = TWithAssociations<
+    IUserAttributes,
+    {
+        accountConfirmation: IAccountConfirmationAttributes;
+        phoneNumber: IPhoneNumberAttributes;
+        role: IRoleAttributes[];
+        profile: IProfileAttributes;
+    }
+>;
+
+export type TUserWithAccountConfirmationAndResetPassword = TWithAssociations<
+    IUserAttributes,
+    { accountConfirmation: IAccountConfirmationAttributes; resetPassword: IResetPasswordAttributes }
+>;
+
+export type TResetPasswordWithUser = TWithAssociations<IResetPasswordAttributes, { user: IUserAttributes }>;
+
+export type TProfileWithUserAssociations = TWithAssociations<
+    IProfileAttributes,
+    {
+        user: IUserAttributes;
+        phoneNumber: IPhoneNumberAttributes;
+        accountConfirmation: IAccountConfirmationAttributes;
+    }
+>;
+
+export type TUserWithProfileAssociations = TWithAssociations<IUserAttributes, { profileDetails: IProfileAttributes }>;
